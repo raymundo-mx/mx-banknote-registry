@@ -1,0 +1,2586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MX Bank Note Registry</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg:#000000; --surface:#111111; --surface2:#1a1a1a; --surface3:#222222;
+  --border:#2a2a2a; --border2:#3a3a3a;
+  --gold:#c9a84c; --gold2:#e8c870; --gold3:#f5dfa0;
+  --muted:#7a7060; --text:#f0e8d8; --text2:#c0b8a8;
+  --red:#c0392b; --green:#27ae60; --blue:#2475a8; --purple:#7d3c98; --teal:#16a085; --orange:#e67e22;
+  --radius:4px; --shadow:0 6px 32px rgba(0,0,0,.8);
+}
+/* ── THEME: BEIGE ── */
+body.theme-beige{
+  --bg:#efe6d4; --surface:#f7f0e1; --surface2:#ede3cf; --surface3:#e3d7bf;
+  --border:#d8cbb0; --border2:#c9b994;
+  --gold:#a8842f; --gold2:#8a6c22; --gold3:#9c7d28;
+  --muted:#8a7c5e; --text:#211a0e; --text2:#4a3f28;
+  --shadow:0 6px 32px rgba(120,100,60,.28);
+}
+/* ── THEME: BURGUNDY ── */
+body.theme-burgundy{
+  --bg:#2a0d14; --surface:#3a1620; --surface2:#451a26; --surface3:#52202e;
+  --border:#5e2734; --border2:#743545;
+  --gold:#d4af4f; --gold2:#ecc870; --gold3:#f5dfa0;
+  --muted:#b08a8f; --text:#f5e6e0; --text2:#d8bcb8;
+  --shadow:0 6px 32px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px}
+
+/* ── HEADER ── */
+#hdr{background:linear-gradient(135deg,#1a1508 0%,#000000 70%);border-bottom:1px solid var(--gold);padding:0 20px;display:flex;align-items:center;gap:14px;height:72px;position:sticky;top:0;z-index:200;box-shadow:0 2px 24px rgba(201,168,76,.18)}
+body.theme-beige #hdr{background:linear-gradient(135deg,#e3d4b2 0%,#efe6d4 70%)}
+body.theme-burgundy #hdr{background:linear-gradient(135deg,#451a26 0%,#2a0d14 70%)}
+#hdr-logo{height:58px;width:auto;flex-shrink:0;filter:drop-shadow(0 2px 6px rgba(201,168,76,.3))}
+#hdr h1{font-family:'Playfair Display',serif;font-size:17px;font-weight:400;color:var(--gold2);white-space:nowrap;letter-spacing:.06em;line-height:1.18}
+#hdr h1 span{display:block}
+#hdr h1 .l1{color:var(--gold2)}
+#hdr h1 .l2{color:var(--gold3)}
+#hdr h1 .l3{color:var(--gold2)}
+.hdr-sep{flex:1}
+.hdr-stats{display:flex;gap:18px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)}
+.hdr-stats strong{color:var(--gold2)}
+
+/* ── NAV ── */
+#nav{background:var(--surface);border-bottom:1px solid var(--border);display:flex;padding:0 20px;gap:2px;overflow-x:auto;flex-shrink:0}
+.nav-btn{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;font-family:'IBM Plex Sans',sans-serif;font-size:11px;font-weight:600;letter-spacing:.07em;padding:11px 15px;text-transform:uppercase;transition:all .18s;white-space:nowrap}
+.nav-btn:hover{color:var(--text)}
+.nav-btn.active{color:var(--gold2);border-bottom-color:var(--gold)}
+
+/* ── BODY ── */
+#body{padding:18px 20px;max-width:1700px;margin:0 auto}
+.screen{display:none}.screen.active{display:block}
+
+/* ── PANELS ── */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px}
+.ph{background:var(--surface2);border-bottom:1px solid var(--border);padding:11px 16px;display:flex;align-items:center;gap:10px}
+.ph h2{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--gold2);flex:1}
+.pb{padding:16px}
+
+/* ── DASHBOARD CHICLETS — solid metallic (matches MX Numismatic Registry) ── */
+.dash-title{font-family:'Playfair Display',serif;font-size:17px;color:var(--gold2);margin-bottom:4px}
+.dash-sub{color:var(--muted);font-size:11px;margin-bottom:18px;letter-spacing:.04em}
+.chic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-bottom:8px}
+.chic-grid.split{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+.chiclet{
+  position:relative;border-radius:12px;padding:18px 20px;cursor:pointer;overflow:hidden;
+  background-image:var(--metal);
+  border:1px solid var(--edge,rgba(0,0,0,.18));
+  color:var(--ink,#fff);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.38), inset 0 -3px 8px rgba(0,0,0,.22), 0 3px 10px rgba(0,0,0,.28);
+  transition:transform .2s, box-shadow .2s;
+}
+.chiclet::before{content:'';position:absolute;left:0;right:0;top:0;height:46%;background:linear-gradient(180deg,rgba(255,255,255,.40),rgba(255,255,255,0));pointer-events:none;border-radius:12px 12px 40% 40%}
+.chiclet::after{content:'';position:absolute;inset:0;background:#000;opacity:0;transition:opacity .2s;pointer-events:none;border-radius:12px}
+.chiclet:hover{transform:translateY(-3px);box-shadow:inset 0 1px 0 rgba(255,255,255,.5), inset 0 -3px 8px rgba(0,0,0,.22), 0 9px 24px rgba(0,0,0,.4)}
+.chiclet:hover::after{opacity:.05}
+.chiclet:active{transform:translateY(-1px)}
+.chic-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;position:relative;z-index:1}
+.chic-icon{font-size:22px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))}
+.chic-tag{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink,#fff);opacity:.72;border:1px solid currentColor;border-radius:8px;padding:2px 7px}
+.chic-count{font-family:'IBM Plex Mono',monospace;font-size:34px;font-weight:600;line-height:1;margin-bottom:4px;position:relative;z-index:1;color:var(--ink,#fff);text-shadow:0 1px 1px rgba(0,0,0,.18)}
+.chic-label{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink,#fff);opacity:.92;position:relative;z-index:1;text-shadow:0 1px 1px rgba(0,0,0,.14)}
+.chic-value{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink,#fff);opacity:.78;margin-top:7px;position:relative;z-index:1}
+/* solid metallic palettes (base → highlight → deep base), dark ink unless noted */
+.chic-gold  {--metal:linear-gradient(150deg,#b8932f 0%,#f7e08a 42%,#caa23c 70%,#9c7d28 100%);--ink:#2a2008}
+.chic-green {--metal:linear-gradient(150deg,#1f6b3d 0%,#5fbf85 42%,#2e9c5a 70%,#1a5733 100%);--ink:#08200f}
+.chic-blue  {--metal:linear-gradient(150deg,#2a5a85 0%,#7fb6e0 42%,#3e87b8 70%,#1f4a6e 100%);--ink:#081a26}
+.chic-purple{--metal:linear-gradient(150deg,#6b2f7a 0%,#b87fc4 42%,#8a3c9c 70%,#572463 100%);--ink:#1d0820}
+.chic-red   {--metal:linear-gradient(150deg,#a3432a 0%,#e69173 42%,#c75a3c 70%,#7e3320 100%);--ink:#260c06}
+.chic-teal  {--metal:linear-gradient(150deg,#147a66 0%,#5fcab3 42%,#1abc9c 70%,#0e5749 100%);--ink:#062019}
+.chic-silver{--metal:linear-gradient(150deg,#8b9196 0%,#e2e6e9 42%,#aeb4b8 70%,#71777b 100%);--ink:#15191c}
+.chic-bronze{--metal:linear-gradient(150deg,#8a5a2b 0%,#d8a36a 42%,#a06b34 70%,#6a4420 100%);--ink:#24160a}
+
+/* ── SUB-TABS ── */
+.stabs{display:flex;gap:2px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:3px;width:fit-content;margin-bottom:16px;flex-wrap:wrap}
+.stab{background:none;border:none;border-radius:3px;color:var(--muted);cursor:pointer;font-family:'IBM Plex Sans',sans-serif;font-size:11px;font-weight:600;letter-spacing:.06em;padding:6px 14px;text-transform:uppercase;transition:all .15s}
+.stab.active{background:var(--gold);color:#000}
+.stab:hover:not(.active){color:var(--text)}
+.tcontent{display:none}.tcontent.active{display:block}
+
+/* ── FORMS ── */
+.fg{display:flex;flex-direction:column;gap:4px;min-width:0}
+.fgrid{display:grid;gap:10px}
+.c2{grid-template-columns:repeat(2,1fr)}.c3{grid-template-columns:repeat(3,1fr)}.c4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:900px){.c4{grid-template-columns:repeat(2,1fr)}.c3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:550px){.c4,.c3,.c2{grid-template-columns:1fr}}
+.s2{grid-column:span 2}.s3{grid-column:span 3}.s4{grid-column:span 4}
+@media(max-width:900px){.s4{grid-column:span 2}.s3{grid-column:span 2}}
+@media(max-width:550px){.s4,.s3,.s2{grid-column:span 1}}
+label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+input,select,textarea{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:12px;padding:7px 10px;outline:none;transition:border-color .15s;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+select option{background:var(--surface2)}
+textarea{resize:vertical;min-height:58px}
+.sar{display:flex;gap:5px}.sar select{flex:1}
+
+/* ── BUTTONS ── */
+.btn{align-items:center;border:none;border-radius:var(--radius);cursor:pointer;display:inline-flex;font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:600;gap:5px;letter-spacing:.04em;padding:8px 16px;transition:all .15s}
+.btn-gold{background:var(--gold);color:#000}.btn-gold:hover{background:var(--gold2)}
+.btn-out{background:none;border:1px solid var(--border2);color:var(--text2)}.btn-out:hover{border-color:var(--gold);color:var(--gold2)}
+.btn-danger{background:var(--red);color:#fff}.btn-danger:hover{background:#e74c3c}
+.btn-success{background:var(--green);color:#fff}.btn-success:hover{background:#2ecc71}
+.btn-blue{background:var(--blue);color:#fff}.btn-blue:hover{background:#3498db}
+.btn-purple{background:var(--purple);color:#fff}
+.btn-sm{font-size:11px;padding:6px 12px}
+.btn-xs{font-size:10px;padding:3px 8px}
+.btn-icon{padding:6px 8px}
+.btn-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ml-auto{margin-left:auto}
+
+/* ── BADGES ── */
+.badge{border-radius:10px;display:inline-block;font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 8px;text-transform:uppercase;white-space:nowrap}
+.b-gold{background:var(--gold);color:#000}
+.b-green{background:rgba(39,174,96,.18);border:1px solid rgba(39,174,96,.3);color:#2ecc71}
+.b-red{background:rgba(192,57,43,.18);border:1px solid rgba(192,57,43,.3);color:#e74c3c}
+.b-blue{background:rgba(36,117,168,.18);border:1px solid rgba(36,117,168,.3);color:#5dade2}
+.b-gray{background:var(--surface3);color:var(--muted)}
+.b-purple{background:rgba(125,60,152,.18);border:1px solid rgba(125,60,152,.3);color:#a569bd}
+.b-orange{background:rgba(230,126,34,.18);border:1px solid rgba(230,126,34,.3);color:#e67e22}
+.b-teal{background:rgba(22,160,133,.18);border:1px solid rgba(22,160,133,.3);color:#1abc9c}
+
+/* ── TABLE ── */
+.dt{border-collapse:collapse;width:100%}
+.dt th{background:var(--surface2);border-bottom:1px solid var(--border);color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.08em;padding:8px 10px;text-align:left;text-transform:uppercase;white-space:nowrap}
+.dt td{border-bottom:1px solid var(--border);color:var(--text2);font-size:12px;padding:7px 10px;vertical-align:middle}
+.dt tr:hover td{background:rgba(201,168,76,.04)}
+.dt td.mono,.mono{font-family:'IBM Plex Mono',monospace;font-size:11px}
+.dt-wrap{overflow-x:auto}
+
+/* ── STATS ROW ── */
+.srow{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:18px}
+.sc{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px 15px}
+.sc-label{color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.08em;margin-bottom:5px;text-transform:uppercase}
+.sc-val{color:var(--gold2);font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:500}
+.sc-sub{color:var(--muted);font-size:10px;margin-top:2px}
+
+/* ── GALLERY ── */
+.ngrid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.ncard{background:var(--surface2);border:1px solid var(--border);border-radius:5px;cursor:pointer;overflow:hidden;transition:all .2s}
+.ncard:hover{border-color:var(--gold);box-shadow:0 6px 20px rgba(0,0,0,.4);transform:translateY(-2px)}
+.ncard-img{align-items:center;background:var(--surface3);color:var(--muted);display:flex;font-size:11px;height:110px;justify-content:center;overflow:hidden;width:100%}
+.ncard-img img{height:100%;object-fit:cover;width:100%}
+.ncard-body{padding:9px 11px}
+.ncard-id{color:var(--gold);font-family:'IBM Plex Mono',monospace;font-size:10px;margin-bottom:3px}
+.ncard-title{color:var(--text);font-family:'Playfair Display',serif;font-size:13px;line-height:1.3;margin-bottom:3px}
+.ncard-meta{align-items:center;color:var(--muted);display:flex;font-size:10px;justify-content:space-between;margin-top:5px}
+.ncard-val{color:var(--gold2);font-family:'IBM Plex Mono',monospace;font-size:12px}
+
+/* ── IMAGES ── */
+.iup{background:var(--surface2);border:2px dashed var(--border2);border-radius:var(--radius);padding:12px;text-align:center;transition:border-color .2s;position:relative}
+.iup:hover{border-color:var(--gold)}
+.iup input[type=file]{display:none}
+.iup-placeholder{color:var(--muted);font-size:11px}
+.iup-btns{display:flex;gap:5px;justify-content:center;margin-top:8px;flex-wrap:wrap}
+.iprev-item{border:1px solid var(--border);border-radius:3px;display:inline-block;height:80px;overflow:hidden;position:relative;vertical-align:top;width:120px}
+.iprev-item img{height:100%;object-fit:cover;width:100%}
+.iprev-item .del-img{align-items:center;background:rgba(0,0,0,.75);border:none;border-radius:50%;color:#fff;cursor:pointer;display:flex;font-size:10px;height:18px;justify-content:center;position:absolute;right:3px;top:3px;width:18px}
+
+/* ── WEBCAM CAPTURE ── */
+.cam-wrap{display:none;margin-top:10px;border:1px solid var(--gold);border-radius:6px;overflow:hidden;background:#000}
+.cam-wrap.open{display:block}
+.cam-wrap video{width:100%;max-height:320px;display:block;background:#000}
+.cam-bar{display:flex;gap:8px;justify-content:center;padding:10px;background:var(--surface2);flex-wrap:wrap}
+
+/* ── DETAIL MODAL IMAGES ── */
+.ndimgs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.ndi{border:1px solid var(--border);border-radius:4px;flex:1;min-width:160px;overflow:hidden}
+.ndi-lbl{background:var(--surface2);border-bottom:1px solid var(--border);font-size:9px;font-weight:700;letter-spacing:.08em;padding:4px 8px;text-transform:uppercase;color:var(--muted)}
+.ndi img{display:block;height:130px;object-fit:contain;padding:6px;width:100%}
+.ndi-ph{align-items:center;color:var(--muted);display:flex;font-size:11px;height:130px;justify-content:center}
+
+/* ── DETAIL GRID ── */
+.dgrid{display:grid;gap:8px 14px;grid-template-columns:repeat(3,1fr)}
+@media(max-width:600px){.dgrid{grid-template-columns:repeat(2,1fr)}}
+.ditem .dl{color:var(--muted);font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.ditem .dv{color:var(--text);font-size:12px;margin-top:2px}
+
+/* ── MODAL ── */
+.moverlay{align-items:center;background:rgba(0,0,0,.78);display:none;inset:0;justify-content:center;padding:16px;position:fixed;z-index:500}
+.moverlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:6px;box-shadow:var(--shadow);max-height:92vh;max-width:960px;overflow-y:auto;width:100%}
+.modal.sm{max-width:480px}
+.modal.md{max-width:600px}
+.mhdr{align-items:center;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;gap:10px;padding:13px 18px;position:sticky;top:0;z-index:10}
+.mhdr h3{color:var(--gold2);flex:1;font-family:'Playfair Display',serif;font-size:15px}
+.mclose{background:none;border:none;border-radius:3px;color:var(--muted);cursor:pointer;font-size:17px;line-height:1;padding:2px 7px}
+.mclose:hover{background:var(--surface3);color:var(--text)}
+.mbody{padding:18px}
+
+/* ── SECTION LABELS ── */
+.slabel{color:var(--gold);font-size:10px;font-weight:700;letter-spacing:.1em;margin-bottom:8px;margin-top:14px;text-transform:uppercase}
+.slabel:first-child{margin-top:0}
+hr.sep{border:none;border-top:1px solid var(--border);margin:14px 0}
+
+/* ── PMG/PCGS TOOLS ── */
+.tool-box{background:linear-gradient(145deg,#181712,#0f0e0b);border:1px solid var(--gold);border-radius:6px;padding:14px}
+.tool-box .slabel{margin-top:0}
+.tool-btns{display:flex;gap:8px;flex-wrap:wrap}
+.tool-note{font-size:10px;color:var(--muted);margin-top:9px;line-height:1.5}
+
+/* ── SEARCH ROW ── */
+.srow-f{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;align-items:center}
+.srow-f input{flex:1;min-width:180px}
+
+/* ── AUCTION CARDS ── */
+.agrid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
+.acard{background:var(--surface2);border:1px solid var(--border);border-radius:5px;display:flex;flex-direction:column;gap:8px;padding:15px;transition:border-color .18s}
+.acard:hover{border-color:var(--gold)}
+.acard-name{color:var(--gold2);font-family:'Playfair Display',serif;font-size:15px}
+.acard-country{color:var(--muted);font-size:11px}
+.acard-desc{color:var(--text2);font-size:12px;line-height:1.5;flex:1}
+.acard a{color:var(--gold);font-size:11px;font-weight:600;letter-spacing:.04em;text-decoration:none}
+.acard a:hover{color:var(--gold2)}
+
+/* ── VIEW TOGGLE ── */
+.vtog{display:flex;gap:3px}
+.vtog button{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--muted);cursor:pointer;font-size:13px;padding:5px 9px;transition:all .15s}
+.vtog button.active{background:var(--gold);border-color:var(--gold);color:#000}
+
+/* ── ACTIVE FILTER PILL ── */
+.filt-pill{display:inline-flex;align-items:center;gap:7px;background:rgba(201,168,76,.12);border:1px solid var(--gold);border-radius:14px;padding:4px 12px;font-size:11px;color:var(--gold2);font-weight:600}
+.filt-pill button{background:none;border:none;color:var(--gold2);cursor:pointer;font-size:13px;line-height:1;padding:0}
+
+/* ── EMPTY STATE ── */
+.empty{padding:38px 20px;text-align:center;color:var(--muted)}
+.empty .ei{font-size:28px;margin-bottom:8px}
+
+/* ── TOAST ── */
+.toast{align-items:center;animation:tin .25s ease;background:var(--surface2);border:1px solid var(--gold);border-radius:var(--radius);bottom:22px;box-shadow:var(--shadow);color:var(--gold2);display:flex;font-size:12px;gap:8px;padding:10px 18px;position:fixed;right:22px;z-index:9999}
+@keyframes tin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ── PRINT ── */
+@media print{
+  #hdr,#nav,.no-print{display:none!important}
+  body{background:#fff;color:#000;font-size:11px}
+  .panel{border:1px solid #ccc;page-break-inside:avoid}
+  .dt th,.dt td{border:1px solid #ccc;padding:4px 6px;font-size:10px}
+  .dt th{background:#f0f0f0}
+  .badge{border:1px solid #999;padding:1px 5px}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="hdr">
+  <img id="hdr-logo" src="logo.png" alt="MX Numismatics" onerror="this.style.display='none'">
+  <h1><span class="l1">Registry</span><span class="l2">Bank Note</span><span class="l3">Inventory</span></h1>
+  <div class="hdr-sep"></div>
+  <div class="hdr-stats">
+    <span>Notes: <strong id="hst-total">0</strong></span>
+    <span>Value: <strong id="hst-value">$0</strong></span>
+    <span>Graded: <strong id="hst-graded">0</strong></span>
+  </div>
+  <div class="btn-row no-print">
+    <button class="btn btn-out btn-sm" id="theme-btn" onclick="cycleTheme()" title="Switch background theme">🌑 Dark</button>
+    <button class="btn btn-out btn-sm" onclick="doBackup()">⬇ Backup</button>
+    <button class="btn btn-out btn-sm" onclick="$('restoreFile').click()">⬆ Restore</button>
+    <input type="file" id="restoreFile" style="display:none" accept=".json" onchange="doRestore(event)">
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <button class="nav-btn active" onclick="showScreen('dashboard',this)">▦ Dashboard</button>
+  <button class="nav-btn" onclick="showScreen('inventory',this)">📦 Inventory</button>
+  <button class="nav-btn" onclick="openNoteModal('add')">➕ Add Note</button>
+  <button class="nav-btn" onclick="showScreen('transactions',this)">💳 Transactions</button>
+  <button class="nav-btn" onclick="showScreen('auctions',this)">🔨 Auctions</button>
+  <button class="nav-btn" onclick="showScreen('reports',this)">📋 Reports</button>
+</nav>
+
+<div id="body">
+
+<!-- ════════════════════════════════════════
+     SCREEN: DASHBOARD
+════════════════════════════════════════ -->
+<div class="screen active" id="sc-dashboard">
+  <div class="dash-title">Registry Dashboard</div>
+  <div class="dash-sub">Tap a chiclet to open that view</div>
+
+  <div class="chic-grid" id="dash-main"></div>
+
+  <div class="slabel" style="margin-top:22px">Certification Split</div>
+  <div class="chic-grid split" id="dash-split"></div>
+</div>
+
+<!-- ════════════════════════════════════════
+     SCREEN: INVENTORY
+════════════════════════════════════════ -->
+<div class="screen" id="sc-inventory">
+  <div class="srow" id="stats-cards">
+    <div class="sc"><div class="sc-label">Total Notes</div><div class="sc-val" id="st-total">0</div><div class="sc-sub">Active inventory</div></div>
+    <div class="sc"><div class="sc-label">Graded</div><div class="sc-val" id="st-graded">0</div><div class="sc-sub">Certified notes</div></div>
+    <div class="sc"><div class="sc-label">Raw</div><div class="sc-val" id="st-raw">0</div><div class="sc-sub">Uncertified</div></div>
+    <div class="sc"><div class="sc-label">Cost Basis</div><div class="sc-val" id="st-cost">$0</div><div class="sc-sub">Acquisition total</div></div>
+    <div class="sc"><div class="sc-label">Market Value</div><div class="sc-val" id="st-mkt">$0</div><div class="sc-sub">Est. current</div></div>
+    <div class="sc"><div class="sc-label">Gain / Loss</div><div class="sc-val" id="st-pnl">$0</div><div class="sc-sub">Unrealized P&L</div></div>
+  </div>
+
+  <div class="panel">
+    <div class="ph">
+      <h2>Inventory</h2>
+      <div class="vtog no-print">
+        <button class="active" title="Table" id="ivt-btn" onclick="setInvView('table')">☰</button>
+        <button title="Gallery" id="ivg-btn" onclick="setInvView('gallery')">⊞</button>
+      </div>
+      <button class="btn btn-gold btn-sm no-print" style="margin-left:8px" onclick="openNoteModal('add')">+ Add Note</button>
+    </div>
+    <div class="pb">
+      <div class="srow-f no-print">
+        <input id="inv-search" placeholder="Search ID, country, denomination, bank, serial…" oninput="renderInventory()">
+        <select id="inv-ftype" onchange="renderInventory()" style="width:120px">
+          <option value="">All Types</option><option value="raw">Raw</option><option value="certified">Certified</option>
+        </select>
+        <select id="inv-fcountry" onchange="renderInventory()" style="width:150px"><option value="">All Countries</option></select>
+        <select id="inv-fstatus" onchange="renderInventory()" style="width:140px">
+          <option value="">All Status</option>
+          <option value="available">Available</option>
+          <option value="forsale">For Sale</option>
+          <option value="pending">Pending Sale</option>
+          <option value="consigned">Consigned</option>
+          <option value="sold">Sold</option>
+          <option value="donation">Donation</option>
+        </select>
+        <span id="inv-filt-pill"></span>
+      </div>
+      <div id="inv-table-wrap" class="dt-wrap">
+        <table class="dt">
+          <thead><tr><th>Inv #</th><th>Country</th><th>Region</th><th>Denomination</th><th>Issuer</th><th>Date</th><th>Type</th><th>Grade/Cond.</th><th>Rarity</th><th>Cost</th><th>Value</th><th>Status</th><th class="no-print">Actions</th></tr></thead>
+          <tbody id="inv-tbody"></tbody>
+        </table>
+      </div>
+      <div id="inv-gallery" style="display:none" class="ngrid"></div>
+      <div id="inv-empty" class="empty" style="display:none"><div class="ei">🏦</div><p>No banknotes found. Add your first note.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     SCREEN: TRANSACTIONS
+════════════════════════════════════════ -->
+<div class="screen" id="sc-transactions">
+  <div class="stabs">
+    <button class="stab active" onclick="showTxTab('buy',this)">Buy</button>
+    <button class="stab" onclick="showTxTab('sell',this)">Sell</button>
+    <button class="stab" onclick="showTxTab('consign',this)">Consign</button>
+    <button class="stab" onclick="showTxTab('upgrade',this)">Upgrade</button>
+    <button class="stab" onclick="showTxTab('donate',this)">Donate</button>
+    <button class="stab" onclick="showTxTab('history',this)">History</button>
+  </div>
+
+  <!-- BUY -->
+  <div class="tcontent active" id="tx-buy">
+    <div class="panel">
+      <div class="ph"><h2>Buy / Acquire Note</h2></div>
+      <div class="pb">
+        <p style="color:var(--muted);font-size:12px;margin-bottom:14px">Record a purchase — adds the note to inventory and logs the transaction.</p>
+        <button class="btn btn-gold no-print" onclick="openNoteModal('buy')">+ Record Purchase</button>
+        <hr class="sep">
+        <div class="slabel">Purchase History</div>
+        <div class="dt-wrap"><table class="dt">
+          <thead><tr><th>Date</th><th>Inv #</th><th>Country</th><th>Denomination</th><th>Seller</th><th>Source</th><th>Price</th><th>Fees</th><th>Total</th></tr></thead>
+          <tbody id="buy-tbody"></tbody>
+        </table></div>
+        <div id="buy-empty" class="empty" style="display:none"><div class="ei">🛒</div><p>No purchases yet.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SELL -->
+  <div class="tcontent" id="tx-sell">
+    <div class="panel">
+      <div class="ph"><h2>Sell Note</h2></div>
+      <div class="pb">
+        <div class="slabel">Available / For Sale</div>
+        <div class="dt-wrap"><table class="dt">
+          <thead><tr><th>Inv #</th><th>Country</th><th>Denomination</th><th>Issuer</th><th>Type</th><th>Grade / Cond.</th><th>Cost</th><th>Est. Value</th><th>Status</th><th class="no-print">Action</th></tr></thead>
+          <tbody id="sell-avail"></tbody>
+        </table></div>
+        <div id="sell-avail-empty" class="empty" style="display:none"><div class="ei">💰</div><p>No available notes.</p></div>
+        <hr class="sep">
+        <div class="slabel">Sales — Pending &amp; Completed</div>
+        <div class="dt-wrap"><table class="dt">
+          <thead><tr><th>Date</th><th>Inv #</th><th>Country</th><th>Denomination</th><th>Buyer</th><th>Platform</th><th>Sale Price</th><th>Fees</th><th>Net</th><th>Status</th><th class="no-print">Action</th></tr></thead>
+          <tbody id="sell-hist"></tbody>
+        </table></div>
+        <div id="sell-hist-empty" class="empty" style="display:none"><div class="ei">📜</div><p>No sales recorded.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONSIGN -->
+  <div class="tcontent" id="tx-consign">
+    <div class="panel">
+      <div class="ph"><h2>Consign Note</h2></div>
+      <div class="pb">
+        <div class="slabel">New Consignment</div>
+        <div class="fgrid c3" style="margin-bottom:14px">
+          <div class="fg"><label>Note (from inventory)</label>
+            <select id="co-note"><option value="">-- Select Note --</option></select></div>
+          <div class="fg"><label>Consignee / Auction House</label><input id="co-house" placeholder="e.g. Heritage Auctions"></div>
+          <div class="fg"><label>Consignment Date</label><input type="date" id="co-date"></div>
+          <div class="fg"><label>Reserve Price ($)</label><input type="number" id="co-reserve" placeholder="0.00" min="0" step="0.01"></div>
+          <div class="fg"><label>Commission Rate (%)</label><input type="number" id="co-rate" placeholder="15" min="0" max="100" step="0.1"></div>
+          <div class="fg"><label>Expected Return Date</label><input type="date" id="co-return"></div>
+          <div class="fg s3"><label>Notes / Lot Number</label><input id="co-notes" placeholder="Lot #, terms, reference…"></div>
+        </div>
+        <button class="btn btn-gold no-print" onclick="recordConsign()">Record Consignment</button>
+        <hr class="sep">
+        <div class="slabel">Active Consignments</div>
+        <div class="dt-wrap"><table class="dt">
+          <thead><tr><th>Date</th><th>Inv #</th><th>Country</th><th>Denomination</th><th>Consignee</th><th>Reserve</th><th>Comm%</th><th>Return</th><th>Notes</th></tr></thead>
+          <tbody id="co-tbody"></tbody>
+        </table></div>
+        <div id="co-empty" class="empty" style="display:none"><div class="ei">🤝</div><p>No consignments recorded.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPGRADE -->
+  <div class="tcontent" id="tx-upgrade">
+    <div class="panel">
+      <div class="ph"><h2>Upgrade / Certify Note</h2></div>
+      <div class="pb">
+        <p style="color:var(--muted);font-size:12px;margin-bottom:14px">Submit a raw note for professional grading, or record a grade update for a certified note.</p>
+        <div class="slabel">New Submission</div>
+        <div class="fgrid c3" style="margin-bottom:14px">
+          <div class="fg"><label>Note (from inventory)</label>
+            <select id="up-note"><option value="">-- Select Note --</option></select></div>
+          <div class="fg"><label>Grading Service</label>
+            <select id="up-service">
+              <option>PMG (Paper Money Guaranty)</option><option>PCGS Banknote</option>
+              <option>NGC</option><option>CGC Currency</option><option>CGAS</option><option>Other</option>
+            </select></div>
+          <div class="fg"><label>Submission Date</label><input type="date" id="up-date"></div>
+          <div class="fg"><label>Grading Fee ($)</label><input type="number" id="up-fee" placeholder="0.00" min="0" step="0.01"></div>
+          <div class="fg"><label>New Grade Received</label>
+            <select id="up-grade" onchange="toggleUpgradeGrade()">
+              <option value="">-- Pending --</option>
+              <option>70 — Gem Uncirculated</option><option>67 — Superb Gem UNC</option>
+              <option>66 — Gem Uncirculated</option><option>65 — Gem Uncirculated</option>
+              <option>64 — Choice Uncirculated</option><option>63 — Choice Uncirculated</option>
+              <option>62 — Uncirculated</option><option>61 — Uncirculated</option>
+              <option>60 — Uncirculated</option><option>58 — About Uncirculated</option>
+              <option>55 — About Uncirculated</option><option>50 — About Uncirculated</option>
+              <option>45 — Extremely Fine</option><option>40 — Extremely Fine</option>
+              <option>35 — Very Fine</option><option>30 — Very Fine</option>
+              <option>25 — Very Fine</option><option>20 — Very Fine</option>
+              <option>15 — Fine</option><option>12 — Fine</option>
+              <option>10 — Very Good</option><option>8 — Very Good</option>
+              <option>6 — Good</option><option>4 — Good</option><option>2 — About Good</option>
+            </select></div>
+          <div class="fg"><label>Certificate / Slab #</label><input id="up-cert" placeholder="Cert number"></div>
+          <div class="fg s3"><label>Notes</label><input id="up-notes" placeholder="Submission details, tracking…"></div>
+        </div>
+        <button class="btn btn-gold no-print" onclick="recordUpgrade()">Record Submission</button>
+        <hr class="sep">
+        <div class="slabel">Upgrade History</div>
+        <div class="dt-wrap"><table class="dt">
+          <thead><tr><th>Date</th><th>Inv #</th><th>Country</th><th>Denomination</th><th>Service</th><th>Fee</th><th>Old Grade</th><th>New Grade</th><th>Cert #</th></tr></thead>
+          <tbody id="up-tbody"></tbody>
+        </table></div>
+        <div id="up-empty" class="empty" style="display:none"><div class="ei">⭐</div><p>No upgrade submissions.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DONATE -->
+  <div class="tcontent" id="tx-donate">
+    <div class="panel">
+      <div class="ph"><h2>Donate Note</h2></div>
+      <div class="pb">
+        <p style="color:var(--muted);font-size:12px;margin-bottom:14px">Record a charitable donation — marks the note as Donation and logs the gift for your records.</p>
+        <div class="slabel">New Donation</div>
+        <div class="fgrid c3" style="margin-bottom:14px">
+          <div class="fg"><label>Note (from inventory)</label>
+            <select id="dn-note"><option value="">-- Select Note --</option></select></div>
+          <div class="fg"><label>Recipient / Organization</label><input id="dn-org" placeholder="e.g. ANA, museum, club"></div>
+          <div class="fg"><label>Donation Date</label><input type="date" id="dn-date"></div>
+          <div class="fg"><label>Appraised / FMV ($)</label><input type="number" id="dn-fmv" placeholder="0.00" min="0" step="0.01"></div>
+          <div class="fg"><label>Receipt / Ref #</label><input id="dn-receipt" placeholder="Tax receipt #"></div>
+          <div class="fg"><label>Tax Year</label><input id="dn-year" placeholder="e.g. 2026"></div>
+          <div class="fg s3"><label>Notes</label><input id="dn-notes" placeholder="Purpose, appraiser, terms…"></div>
+        </div>
+        <button class="btn btn-gold no-print" onclick="recordDonation()">Record Donation</button>
+        <hr class="sep">
+        <div class="slabel">Donation History</div>
+        <div class="dt-wrap"><table class="dt">
+          <thead><tr><th>Date</th><th>Inv #</th><th>Country</th><th>Denomination</th><th>Recipient</th><th>FMV</th><th>Receipt #</th><th>Tax Yr</th><th>Notes</th></tr></thead>
+          <tbody id="dn-tbody"></tbody>
+        </table></div>
+        <div id="dn-empty" class="empty" style="display:none"><div class="ei">🎁</div><p>No donations recorded.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="tcontent" id="tx-history">
+    <div class="panel">
+      <div class="ph"><h2>Transaction History</h2>
+        <button class="btn btn-out btn-sm no-print ml-auto" onclick="printReport('transactions')">🖨 Print</button>
+      </div>
+      <div class="pb">
+        <div class="srow-f no-print">
+          <input id="txh-search" placeholder="Search transactions…" oninput="renderTxHistory()">
+          <select id="txh-type" onchange="renderTxHistory()" style="width:130px">
+            <option value="">All Types</option><option value="buy">Buy</option>
+            <option value="sell">Sell</option><option value="consign">Consign</option>
+            <option value="upgrade">Upgrade</option><option value="donate">Donate</option>
+          </select>
+        </div>
+        <div class="dt-wrap"><table class="dt">
+          <thead><tr><th>Date</th><th>Type</th><th>Inv #</th><th>Country</th><th>Denomination</th><th>Counterparty</th><th>Amount</th><th>Fees</th><th>Net / Total</th><th>Notes</th></tr></thead>
+          <tbody id="txh-tbody"></tbody>
+        </table></div>
+        <div id="txh-empty" class="empty" style="display:none"><div class="ei">📊</div><p>No transactions yet.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     SCREEN: AUCTIONS
+════════════════════════════════════════ -->
+<div class="screen" id="sc-auctions">
+  <div class="panel">
+    <div class="ph"><h2>Major World Banknote Auctions &amp; Resources</h2></div>
+    <div class="pb"><div class="agrid" id="agrid"></div></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     SCREEN: REPORTS
+════════════════════════════════════════ -->
+<div class="screen" id="sc-reports">
+  <div class="panel">
+    <div class="ph"><h2>Reports</h2></div>
+    <div class="pb">
+      <div class="stabs">
+        <button class="stab active" onclick="showRptTab('rpt-inv',this)">Inventory</button>
+        <button class="stab" onclick="showRptTab('rpt-col',this)">Collection</button>
+        <button class="stab" onclick="showRptTab('rpt-tx',this)">Transactions</button>
+      </div>
+
+      <!-- Inventory Report -->
+      <div class="tcontent active" id="rpt-inv">
+        <div class="btn-row no-print" style="margin-bottom:14px">
+          <select id="rptinv-type" style="width:130px" onchange="renderInvReport()">
+            <option value="">All Types</option><option value="raw">Raw</option><option value="certified">Certified</option>
+          </select>
+          <select id="rptinv-country" style="width:160px" onchange="renderInvReport()"><option value="">All Countries</option></select>
+          <select id="rptinv-status" style="width:140px" onchange="renderInvReport()">
+            <option value="">All Status</option>
+            <option value="available">Available</option>
+            <option value="forsale">For Sale</option>
+            <option value="pending">Pending</option>
+            <option value="consigned">Consigned</option>
+            <option value="sold">Sold</option>
+            <option value="donation">Donation</option>
+          </select>
+          <div class="vtog" style="margin-left:auto">
+            <button class="active" id="rptl-btn" onclick="setRptView('list')">☰ List</button>
+            <button id="rptg-btn" onclick="setRptView('gallery')">⊞ Gallery</button>
+          </div>
+          <button class="btn btn-gold btn-sm" onclick="printReport('inventory')">🖨 Print</button>
+        </div>
+        <div id="rptinv-content"></div>
+      </div>
+
+      <!-- Collection Report -->
+      <div class="tcontent" id="rpt-col">
+        <div class="btn-row no-print" style="margin-bottom:14px">
+          <button class="btn btn-gold btn-sm" onclick="printReport('collection')">🖨 Print</button>
+        </div>
+        <div id="rptcol-content"></div>
+      </div>
+
+      <!-- Transaction Report -->
+      <div class="tcontent" id="rpt-tx">
+        <div class="btn-row no-print" style="margin-bottom:14px">
+          <select id="rpttx-type" style="width:130px" onchange="renderTxReport()">
+            <option value="">All Types</option><option value="buy">Buy</option>
+            <option value="sell">Sell</option><option value="consign">Consign</option>
+            <option value="upgrade">Upgrade</option><option value="donate">Donate</option>
+          </select>
+          <button class="btn btn-gold btn-sm" onclick="printReport('transactions')">🖨 Print</button>
+        </div>
+        <div id="rpttx-content"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /#body -->
+
+<!-- ════════════════════════════════════════
+     ADD / BUY / EDIT NOTE MODAL
+════════════════════════════════════════ -->
+<div class="moverlay" id="modal-note">
+<div class="modal">
+  <div class="mhdr">
+    <h3 id="mnote-title">Add Banknote</h3>
+    <button class="mclose" onclick="closeModal('modal-note')">✕</button>
+  </div>
+  <div class="mbody">
+    <input type="hidden" id="fn-id">
+
+    <!-- PMG / PCGS RESEARCH TOOLS -->
+    <div class="tool-box" style="margin-bottom:14px">
+      <div class="slabel">🔎 PMG / PCGS Research Tools</div>
+      <div class="tool-btns">
+        <button class="btn btn-out btn-sm" onclick="openPMGGuide()">📘 PMG World Paper Money Price Guide</button>
+        <button class="btn btn-out btn-sm" onclick="openPMGCert()">🏷 PMG Cert Lookup</button>
+        <button class="btn btn-out btn-sm" onclick="openPMGPop()">📊 PMG Population</button>
+        <button class="btn btn-out btn-sm" onclick="openPCGS()">📕 PCGS Banknote Lookup</button>
+        <button class="btn btn-out btn-sm" onclick="openCatalogSearch()">🌐 Catalog Search</button>
+      </div>
+      <div class="tool-note">Buttons pre-fill a search from the fields below (Country, Denomination, Pick #, Cert #). Fill those in first for the best results — links open in a new tab.</div>
+    </div>
+
+    <!-- Purchase info (buy mode only) -->
+    <div id="tx-section" style="display:none">
+      <div class="slabel">Purchase Information</div>
+      <div class="fgrid c4">
+        <div class="fg"><label>Purchase Date</label><input type="date" id="tx-date"></div>
+        <div class="fg"><label>Seller / Source</label><input id="tx-seller" placeholder="Dealer, auction house…"></div>
+        <div class="fg"><label>Source Type</label>
+          <select id="tx-srctype">
+            <option>Auction</option><option>Dealer</option><option>Private Sale</option>
+            <option>Estate Sale</option><option>Gift</option><option>Trade</option><option>Other</option>
+          </select></div>
+        <div class="fg"><label>Lot / Invoice #</label><input id="tx-lot" placeholder="Lot or invoice #"></div>
+        <div class="fg"><label>Price Paid ($)</label><input type="number" id="tx-price" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="fg"><label>Buyer's Premium ($)</label><input type="number" id="tx-premium" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="fg"><label>Shipping ($)</label><input type="number" id="tx-ship" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="fg"><label>Other Fees ($)</label><input type="number" id="tx-fees" placeholder="0.00" min="0" step="0.01"></div>
+      </div>
+      <hr class="sep">
+    </div>
+
+    <!-- Identification -->
+    <div class="slabel">Identification</div>
+    <div class="fgrid c4">
+      <div class="fg">
+        <label>Inventory # (optional override)</label>
+        <input id="fn-invnum" placeholder="Auto if blank — e.g. MX-B00042">
+      </div>
+      <div class="fg">
+        <label>Country *</label>
+        <div class="sar">
+          <select id="fn-country" onchange="onCountryChange()"><option value="">-- Select --</option></select>
+          <button class="btn btn-out btn-icon" title="Add country" onclick="addItem('country')">+</button>
+        </div>
+      </div>
+      <div class="fg"><label>Region / State / Province</label><input id="fn-region" placeholder="e.g. Chihuahua, Bavaria"></div>
+      <div class="fg">
+        <label>Issuing Authority / Bank *</label>
+        <div class="sar">
+          <select id="fn-issuer"><option value="">-- Select --</option></select>
+          <button class="btn btn-out btn-icon" title="Add issuer" onclick="addItem('issuer')">+</button>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Private Bank of Emission</label>
+        <div class="sar">
+          <select id="fn-privbank"><option value="">-- None --</option></select>
+          <button class="btn btn-out btn-icon" title="Add private bank" onclick="addItem('privbank')">+</button>
+        </div>
+      </div>
+      <div class="fg"><label>Denomination / Face Value *</label><input id="fn-denom" placeholder="e.g. 100 Pesos"></div>
+      <div class="fg"><label>Currency</label><input id="fn-currency" placeholder="e.g. Peso, Dollar, Mark"></div>
+      <div class="fg"><label>Date on Note</label><input id="fn-notedate" placeholder="e.g. 1910, ND (1920)"></div>
+      <div class="fg"><label>Series / Letter</label><input id="fn-series" placeholder="e.g. Series A, B"></div>
+      <div class="fg"><label>Serial Number</label><input id="fn-serial" placeholder="e.g. A000123"></div>
+      <div class="fg"><label>Pick # / Catalog Ref.</label><input id="fn-pick" placeholder="e.g. P-123a, S/M-Y3"></div>
+      <div class="fg">
+        <label>Printing Company</label>
+        <div class="sar">
+          <select id="fn-printer"><option value="">-- None --</option></select>
+          <button class="btn btn-out btn-icon" title="Add printer" onclick="addItem('printer')">+</button>
+        </div>
+      </div>
+      <div class="fg"><label>Signatures on Note</label><input id="fn-sigs" placeholder="e.g. Cashier / President"></div>
+    </div>
+
+    <hr class="sep">
+    <!-- Physical -->
+    <div class="slabel">Physical &amp; Classification</div>
+    <div class="fgrid c4">
+      <div class="fg"><label>Note Type *</label>
+        <select id="fn-type" onchange="toggleTypeFields()">
+          <option value="raw">Raw / Ungraded</option>
+          <option value="certified">Certified / Graded</option>
+        </select></div>
+      <div class="fg"><label>Status</label>
+        <select id="fn-status">
+          <option value="available">Available</option>
+          <option value="forsale">For Sale</option>
+          <option value="pending">Pending Sale</option>
+          <option value="consigned">Consigned</option>
+          <option value="sold">Sold</option>
+          <option value="donation">Donation</option>
+        </select></div>
+      <!-- RAW fields -->
+      <div class="fg" id="fg-rawcat"><label>Raw Category</label>
+        <select id="fn-rawcat">
+          <option value="issued">Issued (Circulated)</option>
+          <option value="unc">Uncirculated</option>
+          <option value="remainder">Remainder</option>
+          <option value="proof">Proof</option>
+          <option value="specimen">Specimen</option>
+          <option value="test">Test Note</option>
+          <option value="error">Error Note</option>
+          <option value="star">Star / Replacement</option>
+          <option value="essay">Essay / Proposed Design</option>
+          <option value="cancelled">Cancelled</option>
+          <option value="propaganda">Propaganda / Military</option>
+          <option value="emergency">Emergency / Notgeld</option>
+          <option value="counterfeit">Counterfeit (Reference)</option>
+          <option value="other">Other</option>
+        </select></div>
+      <div class="fg" id="fg-condition"><label>Condition (Description)</label>
+        <select id="fn-condition">
+          <option>Gem Uncirculated</option><option>Choice Uncirculated</option>
+          <option>Uncirculated</option><option>About Uncirculated</option>
+          <option>Extremely Fine</option><option>Very Fine</option>
+          <option>Fine</option><option>Very Good</option>
+          <option>Good</option><option>About Good</option><option>Poor</option>
+        </select></div>
+      <!-- CERTIFIED fields -->
+      <div class="fg" id="fg-service" style="display:none"><label>Grading Service</label>
+        <select id="fn-service">
+          <option>PMG (Paper Money Guaranty)</option><option>PCGS Banknote</option>
+          <option>NGC</option><option>CGC Currency</option><option>CGAS</option><option>Other</option>
+        </select></div>
+      <div class="fg" id="fg-grade" style="display:none"><label>Grade (Sheldon Scale)</label>
+        <select id="fn-grade">
+          <option value="">-- Select --</option>
+          <option value="70">70 — Gem Uncirculated</option><option value="67">67 — Superb Gem UNC</option>
+          <option value="66">66 — Gem Uncirculated</option><option value="65">65 — Gem Uncirculated</option>
+          <option value="64">64 — Choice Uncirculated</option><option value="63">63 — Choice Uncirculated</option>
+          <option value="62">62 — Uncirculated</option><option value="61">61 — Uncirculated</option>
+          <option value="60">60 — Uncirculated</option><option value="58">58 — About Uncirculated</option>
+          <option value="55">55 — About Uncirculated</option><option value="50">50 — About Uncirculated</option>
+          <option value="45">45 — Extremely Fine</option><option value="40">40 — Extremely Fine</option>
+          <option value="35">35 — Very Fine</option><option value="30">30 — Very Fine</option>
+          <option value="25">25 — Very Fine</option><option value="20">20 — Very Fine</option>
+          <option value="15">15 — Fine</option><option value="12">12 — Fine</option>
+          <option value="10">10 — Very Good</option><option value="8">8 — Very Good</option>
+          <option value="6">6 — Good</option><option value="4">4 — Good</option><option value="2">2 — About Good</option>
+        </select></div>
+      <div class="fg" id="fg-certnum" style="display:none"><label>Cert / Slab Number</label><input id="fn-certnum" placeholder="e.g. PMG 1234567"></div>
+      <div class="fg" id="fg-certlabel" style="display:none"><label>Label Designation</label><input id="fn-certlabel" placeholder="e.g. EPQ, NET, Apparent"></div>
+      <!-- Common -->
+      <div class="fg"><label>Rarity</label>
+        <select id="fn-rarity">
+          <option value="">Unknown</option>
+          <option value="R1">R1 — Common</option><option value="R2">R2 — Slightly Scarce</option>
+          <option value="R3">R3 — Scarce</option><option value="R4">R4 — Very Scarce</option>
+          <option value="R5">R5 — Rare</option><option value="R6">R6 — Very Rare</option>
+          <option value="R7">R7 — Extremely Rare</option><option value="R8">R8 — Unique or Nearly So</option>
+        </select></div>
+      <div class="fg"><label>Note Size (mm)</label><input id="fn-size" placeholder="e.g. 187 × 85"></div>
+      <div class="fg"><label>Color / Theme</label><input id="fn-color" placeholder="e.g. Blue &amp; Brown, Green"></div>
+      <div class="fg"><label>Watermark</label><input id="fn-watermark" placeholder="e.g. Portrait, None"></div>
+      <div class="fg"><label>Security Features</label><input id="fn-security" placeholder="e.g. Thread, Hologram, UV"></div>
+      <div class="fg"><label>Overprint / Surcharge</label><input id="fn-overprint" placeholder="e.g. SPECIMEN, MUESTRA"></div>
+    </div>
+
+    <hr class="sep">
+    <!-- Valuation -->
+    <div class="slabel">Valuation &amp; Storage</div>
+    <div class="fgrid c4">
+      <div class="fg"><label>Acquisition Cost ($)</label><input type="number" id="fn-cost" placeholder="0.00" min="0" step="0.01"></div>
+      <div class="fg"><label>Est. Market Value ($)</label><input type="number" id="fn-value" placeholder="0.00" min="0" step="0.01"></div>
+      <div class="fg"><label>Asking Price ($)</label><input type="number" id="fn-asking" placeholder="0.00" min="0" step="0.01"></div>
+      <div class="fg"><label>Insurance Value ($)</label><input type="number" id="fn-insurance" placeholder="0.00" min="0" step="0.01"></div>
+      <div class="fg"><label>Storage Location</label><input id="fn-location" placeholder="e.g. Safe #3, Binder A-5"></div>
+      <div class="fg"><label>Provenance</label><input id="fn-provenance" placeholder="Prior owner, auction house, estate…"></div>
+    </div>
+
+    <hr class="sep">
+    <!-- Notes -->
+    <div class="slabel">Description &amp; Notes</div>
+    <div class="fgrid c2">
+      <div class="fg"><label>Description / Vignette</label>
+        <textarea id="fn-desc" rows="3" placeholder="Design features, vignette description, historical context…"></textarea></div>
+      <div class="fg"><label>Private Notes</label>
+        <textarea id="fn-privnotes" rows="3" placeholder="Personal research notes, purchase story, references…"></textarea></div>
+    </div>
+
+    <hr class="sep">
+    <!-- Images -->
+    <div class="slabel">Images — Upload or Capture (MacBook / iPhone / Webcam)</div>
+    <div class="fgrid c3">
+      <div>
+        <label style="display:block;margin-bottom:6px">Obverse (Front)</label>
+        <div class="iup" id="iup-obv">
+          <input type="file" id="file-obv" accept="image/*" onchange="handleUpload(event,'obv')">
+          <input type="file" id="cap-obv" accept="image/*" capture="environment" onchange="handleUpload(event,'obv')">
+          <div id="prev-obv"><div class="iup-placeholder">📷 No image yet</div></div>
+          <div class="iup-btns no-print">
+            <button class="btn btn-out btn-xs" onclick="$('file-obv').click()">📁 Upload</button>
+            <button class="btn btn-out btn-xs" onclick="cameraBtn('obv')">📷 Camera</button>
+          </div>
+        </div>
+        <div class="cam-wrap" id="cam-obv">
+          <video id="vid-obv" autoplay playsinline></video>
+          <div class="cam-bar">
+            <button class="btn btn-gold btn-sm" onclick="snapCam('obv')">📸 Capture</button>
+            <button class="btn btn-out btn-sm" onclick="stopCam('obv')">Cancel</button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <label style="display:block;margin-bottom:6px">Reverse (Back)</label>
+        <div class="iup" id="iup-rev">
+          <input type="file" id="file-rev" accept="image/*" onchange="handleUpload(event,'rev')">
+          <input type="file" id="cap-rev" accept="image/*" capture="environment" onchange="handleUpload(event,'rev')">
+          <div id="prev-rev"><div class="iup-placeholder">📷 No image yet</div></div>
+          <div class="iup-btns no-print">
+            <button class="btn btn-out btn-xs" onclick="$('file-rev').click()">📁 Upload</button>
+            <button class="btn btn-out btn-xs" onclick="cameraBtn('rev')">📷 Camera</button>
+          </div>
+        </div>
+        <div class="cam-wrap" id="cam-rev">
+          <video id="vid-rev" autoplay playsinline></video>
+          <div class="cam-bar">
+            <button class="btn btn-gold btn-sm" onclick="snapCam('rev')">📸 Capture</button>
+            <button class="btn btn-out btn-sm" onclick="stopCam('rev')">Cancel</button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <label style="display:block;margin-bottom:6px">Detail / Signature / Seal</label>
+        <div class="iup" id="iup-det">
+          <input type="file" id="file-det" accept="image/*" onchange="handleUpload(event,'det')">
+          <input type="file" id="cap-det" accept="image/*" capture="environment" onchange="handleUpload(event,'det')">
+          <div id="prev-det"><div class="iup-placeholder">📷 No image yet</div></div>
+          <div class="iup-btns no-print">
+            <button class="btn btn-out btn-xs" onclick="$('file-det').click()">📁 Upload</button>
+            <button class="btn btn-out btn-xs" onclick="cameraBtn('det')">📷 Camera</button>
+          </div>
+        </div>
+        <div class="cam-wrap" id="cam-det">
+          <video id="vid-det" autoplay playsinline></video>
+          <div class="cam-bar">
+            <button class="btn btn-gold btn-sm" onclick="snapCam('det')">📸 Capture</button>
+            <button class="btn btn-out btn-sm" onclick="stopCam('det')">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="tool-note no-print">📷 <strong>Camera</strong> opens your iPhone's camera on mobile, or your MacBook Pro's built-in camera with a live capture preview on desktop. 📁 <strong>Upload</strong> picks an existing image file.</p>
+
+    <hr class="sep">
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="saveNote()" id="mn-save">💾 Save Note</button>
+      <button class="btn btn-out" onclick="closeModal('modal-note')">Cancel</button>
+      <button class="btn btn-danger ml-auto" id="mn-delete" style="display:none" onclick="deleteNote()">🗑 Delete Note</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- SELL MODAL -->
+<div class="moverlay" id="modal-sell">
+<div class="modal md">
+  <div class="mhdr"><h3>Record Sale</h3><button class="mclose" onclick="closeModal('modal-sell')">✕</button></div>
+  <div class="mbody">
+    <input type="hidden" id="sell-noteid">
+    <div id="sell-noteinfo" style="background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:10px;margin-bottom:14px"></div>
+    <div class="fgrid c2">
+      <div class="fg"><label>Sale Date</label><input type="date" id="sell-date"></div>
+      <div class="fg"><label>Buyer</label><input id="sell-buyer" placeholder="Buyer name / Anonymous"></div>
+      <div class="fg"><label>Platform / Venue</label>
+        <select id="sell-platform">
+          <option>Private Sale</option><option>Heritage Auctions</option><option>Stack's Bowers</option>
+          <option>Spink</option><option>Lyn Knight Auctions</option><option>eBay</option>
+          <option>Archives International</option><option>Sedwick Coins</option>
+          <option>Other Auction</option><option>Other</option>
+        </select></div>
+      <div class="fg"><label>Sale Price ($)</label><input type="number" id="sell-price" placeholder="0.00" min="0" step="0.01"></div>
+      <div class="fg"><label>Seller's Commission ($)</label><input type="number" id="sell-comm" placeholder="0.00" min="0" step="0.01"></div>
+      <div class="fg"><label>Other Fees ($)</label><input type="number" id="sell-fees" placeholder="0.00" min="0" step="0.01"></div>
+      <div class="fg s2"><label>Notes</label><input id="sell-txnotes" placeholder="Lot #, invoice, reference…"></div>
+    </div>
+    <hr class="sep">
+    <div class="btn-row">
+      <button class="btn btn-out" onclick="completeSale('pending')">⏳ Pending Sale</button>
+      <button class="btn btn-success" onclick="completeSale('sold')">✓ Complete Sale</button>
+      <button class="btn btn-out" onclick="closeModal('modal-sell')">Cancel</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- NOTE DETAIL MODAL -->
+<div class="moverlay" id="modal-detail">
+<div class="modal">
+  <div class="mhdr"><h3 id="mdet-title">Note Detail</h3><button class="mclose" onclick="closeModal('modal-detail')">✕</button></div>
+  <div class="mbody" id="mdet-body"></div>
+</div>
+</div>
+
+<!-- ADD ITEM MODAL -->
+<div class="moverlay" id="modal-additem">
+<div class="modal sm">
+  <div class="mhdr"><h3 id="mai-title">Add Item</h3><button class="mclose" onclick="closeModal('modal-additem')">✕</button></div>
+  <div class="mbody">
+    <div id="mai-body"></div>
+    <hr class="sep">
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="saveAddItem()">Add</button>
+      <button class="btn btn-out" onclick="closeModal('modal-additem')">Cancel</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+'use strict';
+// ════════════════════════════════════════════════════════
+//  UTILITIES
+// ════════════════════════════════════════════════════════
+const $ = id => document.getElementById(id);
+const gv = id => { const el = $(id); return el ? el.value : ''; };
+const sv = (id, val) => { const el = $(id); if (el && val != null) el.value = val; };
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const fmt$ = v => v ? '$' + parseFloat(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) : '—';
+const today = () => new Date().toISOString().slice(0,10);
+function toast(msg, ms=3000) {
+  const t = document.createElement('div');
+  t.className = 'toast'; t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), ms);
+}
+const STATUS_LABEL = {available:'Available',forsale:'For Sale',pending:'Pending',consigned:'Consigned',sold:'Sold',donation:'Donation'};
+
+// ════════════════════════════════════════════════════════
+//  INDEXEDDB
+// ════════════════════════════════════════════════════════
+let db;
+const DB = 'MXBNV4', VER = 1;
+
+function initDB() {
+  return new Promise((res,rej) => {
+    const req = indexedDB.open(DB, VER);
+    req.onupgradeneeded = e => {
+      const d = e.target.result;
+      if (!d.objectStoreNames.contains('notes')) {
+        const s = d.createObjectStore('notes',{keyPath:'id'});
+        s.createIndex('country','country',{unique:false});
+        s.createIndex('type','type',{unique:false});
+        s.createIndex('status','status',{unique:false});
+      }
+      if (!d.objectStoreNames.contains('txs')) {
+        const t = d.createObjectStore('txs',{keyPath:'txid',autoIncrement:true});
+        t.createIndex('noteId','noteId',{unique:false});
+        t.createIndex('txtype','txtype',{unique:false});
+      }
+      if (!d.objectStoreNames.contains('meta'))
+        d.createObjectStore('meta',{keyPath:'key'});
+    };
+    req.onsuccess = e => { db = e.target.result; res(); };
+    req.onerror = e => rej(e.target.error);
+  });
+}
+
+function dbAll(store) {
+  return new Promise((res,rej) => {
+    const r = db.transaction(store,'readonly').objectStore(store).getAll();
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej(r.error);
+  });
+}
+function dbGet(store,key) {
+  return new Promise((res,rej) => {
+    const r = db.transaction(store,'readonly').objectStore(store).get(key);
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej(r.error);
+  });
+}
+function dbPut(store,obj) {
+  return new Promise((res,rej) => {
+    const r = db.transaction(store,'readwrite').objectStore(store).put(obj);
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej(r.error);
+  });
+}
+function dbDel(store,key) {
+  return new Promise((res,rej) => {
+    const r = db.transaction(store,'readwrite').objectStore(store).delete(key);
+    r.onsuccess = () => res();
+    r.onerror = () => rej(r.error);
+  });
+}
+
+// ════════════════════════════════════════════════════════
+//  COUNTERS  —  unified sequence: MX-B00001, MX-B00002 …
+// ════════════════════════════════════════════════════════
+let counters = {seq:0, raw:0, cert:0};
+async function loadCounters() {
+  const r = await dbGet('meta','counters');
+  if (r) counters = Object.assign({seq:0, raw:0, cert:0}, r.val);
+  // migrate older split counters into a unified seq if needed
+  if (!counters.seq) counters.seq = (counters.raw||0) + (counters.cert||0);
+}
+async function saveCounters() { await dbPut('meta',{key:'counters',val:counters}); }
+async function nextId(type) {
+  counters.seq++;
+  await saveCounters();
+  return 'MX-B' + String(counters.seq).padStart(5,'0');
+}
+
+// ════════════════════════════════════════════════════════
+//  REFERENCE DATA
+// ════════════════════════════════════════════════════════
+let ref = { countries:[], issuers:{}, privbanks:{}, printers:[] };
+
+const DEF_COUNTRIES = [
+  'Afghanistan','Albania','Algeria','Angola','Argentina','Armenia','Australia','Austria',
+  'Azerbaijan','Bahrain','Bangladesh','Belarus','Belgium','Belize','Bolivia','Bosnia &amp; Herzegovina',
+  'Brazil','Bulgaria','Burma (Myanmar)','Cambodia','Canada','Chile','China','Colombia',
+  'Congo (Democratic Republic)','Costa Rica','Croatia','Cuba','Cyprus','Czech Republic',
+  'Denmark','Dominican Republic','Ecuador','Egypt','El Salvador','Estonia','Ethiopia',
+  'Finland','France','Georgia','Germany','Ghana','Greece','Guatemala','Haiti','Honduras',
+  'Hungary','India','Indonesia','Iran','Iraq','Ireland','Israel','Italy','Jamaica',
+  'Japan','Jordan','Kazakhstan','Kenya','Kuwait','Latvia','Lebanon','Libya','Lithuania',
+  'Luxembourg','Malaysia','Mexico','Morocco','Mozambique','Netherlands','New Zealand',
+  'Nicaragua','Nigeria','North Korea','Norway','Pakistan','Panama','Paraguay','Peru',
+  'Philippines','Poland','Portugal','Romania','Russia','Saudi Arabia','Serbia',
+  'Sierra Leone','Singapore','Slovakia','Somalia','South Africa','South Korea','Spain',
+  'Sudan','Sweden','Switzerland','Syria','Taiwan','Tanzania','Thailand','Tunisia',
+  'Turkey','Uganda','Ukraine','United Kingdom','United States','Uruguay','Venezuela',
+  'Vietnam','Yemen','Zimbabwe'
+];
+
+const DEF_ISSUERS = {
+  'Mexico':[
+    'Banco de México','Banco Nacional de México (BANAMEX)',
+    'Banco de Chihuahua','Banco Minero de Chihuahua','Banco Comercial de Chihuahua',
+    'Banco Mejicano (Chihuahua)','Banco de Jalisco','Banco de Sonora',
+    'Banco de Nuevo León','Banco de Durango','Banco de Zacatecas',
+    'Banco de Guerrero','Banco de Hidalgo','Banco de Tamaulipas',
+    'Banco de Veracruz','Banco de Tabasco','Banco de Coahuila',
+    'Banco de Oaxaca','Banco de Puebla','Banco de Morelos',
+    'Banco Internacional e Hipotecario','Banco Yucateco',
+    'El Banco de Londres y México','Banco Peninsular Mexicano',
+    'Banco Nacional de Crédito Rural','Tesorería de la Federación',
+    'Ejército Constitucionalista (Papel Moneda)','Caja de Préstamos'
+  ],
+  'United States':[
+    'Federal Reserve Bank','U.S. Treasury / Bureau of Engraving &amp; Printing',
+    'National Currency (State Charter Banks)','First National Bank',
+    'Merchants National Bank','Continental Illinois National Bank',
+    'Bank of the United States (First)','Bank of the United States (Second)'
+  ],
+  'United Kingdom':[
+    'Bank of England','Royal Bank of Scotland','Bank of Scotland',
+    'Clydesdale Bank','Ulster Bank','Northern Bank','Allied Irish Banks',
+    'Isle of Man Bank','States of Guernsey','States of Jersey'
+  ],
+  'Germany':[
+    'Deutsche Bundesbank','Reichsbank','Rentenbank','Deutsche Rentenbank',
+    'Preussische Staatsbank','Badische Bank','Bayerische Staatsbank',
+    'Reichskreditkassenscheine','Notgeldausgaben (Various)'
+  ],
+  'France':[
+    'Banque de France','Banque de l\'Algérie','Banque de l\'Indochine',
+    'Caisse Centrale de la France Libre','Caisse Centrale de la France d\'Outre-Mer',
+    'Trésor Français'
+  ],
+  'Argentina':[
+    'Banco Central de la República Argentina','Banco de la Nación Argentina',
+    'Banco de la Provincia de Buenos Aires','Banco Hipotecario Nacional',
+    'Caja de Conversión','Banco de la Provincia de Córdoba'
+  ],
+  'China':[
+    'People\'s Bank of China','Bank of China','Central Bank of China',
+    'Bank of Communications','Farmer\'s Bank of China','Ta Ching Government Bank',
+    'Imperial Bank of China','Bank of Taiwan','Kwangtung Provincial Bank'
+  ],
+  'Cuba':[
+    'Banco Nacional de Cuba','Banco Español de la Isla de Cuba',
+    'El Banco Español de La Habana','Caja de Cambios','Certificados de Plata'
+  ],
+  'Brazil':[
+    'Banco Central do Brasil','Banco do Brasil','Tesouro Nacional',
+    'Caixa de Estabilização','Estado de São Paulo','Casa da Moeda do Brasil'
+  ],
+  'Russia':[
+    'Bank of Russia (Central Bank)','Imperial State Bank','Soviet State Bank (Gosbank)',
+    'RSFSR Treasury','Provisional Government Treasury'
+  ]
+};
+
+const DEF_PRIVBANKS = {
+  'Mexico':[
+    'Banco Mejicano (Chihuahua)','Banco Minero de Chihuahua',
+    'Banco Comercial de Chihuahua','Banco de Chihuahua',
+    'Banco de Sonora','Banco de Jalisco','Banco de Durango',
+    'Banco Peninsular Mexicano','Banco Yucateco',
+    'El Banco de Londres y México','Banco de Tamaulipas',
+    'Banco de Guerrero','Banco de Hidalgo','Banco de Zacatecas',
+    'Banco de Morelos','Banco de Nuevo León','Banco de Veracruz',
+    'Banco de Tabasco','Banco de Coahuila','Banco de Oaxaca',
+    'Banco de Puebla','Banco Oriental de México',
+    'Banco Internacional e Hipotecario'
+  ],
+  'United States':[
+    'First National Bank of New York','Merchants National Bank',
+    'National City Bank','Bank of North America','Bank of New York',
+    'First National Bank of Chicago','National Shawmut Bank'
+  ],
+  'Cuba':[
+    'Banco Español de la Isla de Cuba','El Banco Español de La Habana',
+    'Banco de La Habana'
+  ]
+};
+
+const DEF_PRINTERS = [
+  'American Bank Note Co. (ABNC)',
+  'Canadian Bank Note Co. (CBNC)',
+  'British American Bank Note Co. (BABNC)',
+  'Bureau of Engraving &amp; Printing (BEP — USA)',
+  'De La Rue &amp; Co. (UK)',
+  'Giesecke+Devrient (G+D — Germany)',
+  'Orell Füssli (Switzerland)',
+  'Bradbury Wilkinson &amp; Co.',
+  'Thomas De La Rue &amp; Co.',
+  'Harrison &amp; Sons',
+  'Waterlow &amp; Sons',
+  'Perkins Bacon &amp; Co.',
+  'Security Printers International',
+  'Note Printing Australia (NPA)',
+  'Commonwealth Note Printing Branch (Australia)',
+  'Joh. Enschedé en Zonen (Netherlands)',
+  'Lithuanian Banknote Printing House',
+  'Polska Wytwórnia Papierów Wartościowych (PWPW)',
+  'Goznak (Russia)',
+  'Crane Currency (USA)',
+  'Oberthur Technologies (France)',
+  'Morpho / Safran (France)',
+  'Magyar Bankjegynyomda (Hungary)',
+  'Valori / Istituto Poligrafico e Zecca dello Stato (Italy)',
+  'F.C. Heintzemann (Denmark)',
+  'National Banknote Printers (South Africa)',
+  'Seguridad en Papel (SEPSA — Mexico)',
+  'Imprenta de Hacienda (Mexico)',
+  'Casa da Moeda do Brasil',
+  'Burroughs Corporation',
+  'Druck und Verlagsanstalt (DVA)',
+  'E.A. Wright Bank Note Co.',
+  'Homer Lee Bank Note Co.',
+  'International Bank Note Society (IBNS) Press'
+];
+
+async function loadRef() {
+  const r = await dbGet('meta','refdata');
+  if (r) { ref = r.val; }
+  else {
+    ref.countries = [...DEF_COUNTRIES];
+    ref.printers = [...DEF_PRINTERS];
+    for (const [c,v] of Object.entries(DEF_ISSUERS)) ref.issuers[c] = [...v];
+    for (const [c,v] of Object.entries(DEF_PRIVBANKS)) ref.privbanks[c] = [...v];
+    await saveRef();
+  }
+}
+async function saveRef() { await dbPut('meta',{key:'refdata',val:ref}); }
+
+// ════════════════════════════════════════════════════════
+//  SCREEN NAVIGATION
+// ════════════════════════════════════════════════════════
+let currentScreen = 'dashboard';
+function showScreen(name, btn) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  $('sc-'+name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  else {
+    // find matching nav button
+    document.querySelectorAll('.nav-btn').forEach(b=>{ if(b.getAttribute('onclick')?.includes(`'${name}'`)) b.classList.add('active'); });
+  }
+  currentScreen = name;
+  if (name==='dashboard') renderDashboard();
+  else if (name==='inventory') renderInventory();
+  else if (name==='transactions') refreshAllTxTabs();
+  else if (name==='auctions') renderAuctions();
+  else if (name==='reports') refreshAllReports();
+}
+
+function showTxTab(tab, btn) {
+  document.querySelectorAll('#sc-transactions .tcontent').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('#sc-transactions .stab').forEach(b=>b.classList.remove('active'));
+  $('tx-'+tab).classList.add('active');
+  btn.classList.add('active');
+}
+
+function showRptTab(tab, btn) {
+  document.querySelectorAll('#sc-reports .tcontent').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('#sc-reports .stab').forEach(b=>b.classList.remove('active'));
+  $(tab).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ════════════════════════════════════════════════════════
+//  DASHBOARD
+// ════════════════════════════════════════════════════════
+async function renderDashboard() {
+  const notes = await dbAll('notes');
+  const txs = await dbAll('txs');
+  const sum = arr => arr.reduce((a,n)=>a+(parseFloat(n.value)||0),0);
+  const st = s => notes.filter(n=>(n.status||'available')===s);
+
+  const active = notes.filter(n=>!['sold','donation'].includes(n.status||'available'));
+  const forsale = st('forsale');
+  const consigned = st('consigned');
+  const sold = st('sold');
+  const donation = st('donation');
+  const graded = active.filter(n=>n.type==='certified');
+  const raw = active.filter(n=>n.type!=='certified');
+
+  const main = [
+    {key:'',         cls:'chic-gold',   icon:'🏦', tag:'Active',     label:'All Active Notes', count:active.length,    value:sum(active)},
+    {key:'forsale',  cls:'chic-green',  icon:'🏷️', tag:'For Sale',   label:'For Sale',          count:forsale.length,   value:sum(forsale)},
+    {key:'consigned',cls:'chic-purple', icon:'🤝', tag:'Consigned',  label:'Consignment',       count:consigned.length, value:sum(consigned)},
+    {key:'sold',     cls:'chic-red',    icon:'💰', tag:'Sold',       label:'Sold',              count:sold.length,      value:sum(sold)},
+    {key:'donation', cls:'chic-teal',   icon:'🎁', tag:'Donation',   label:'Donations',         count:donation.length,  value:sum(donation)},
+    {key:'__tx',     cls:'chic-blue',   icon:'💳', tag:'Ledger',     label:'Transactions',      count:txs.length,       value:null, isTx:true},
+  ];
+  $('dash-main').innerHTML = main.map(c=>chicHTML(c)).join('');
+
+  const split = [
+    {key:'certified',cls:'chic-gold',  icon:'⭐', tag:'Graded',  label:'Graded Notes', count:graded.length, value:sum(graded), isType:true},
+    {key:'raw',      cls:'chic-silver',icon:'📄', tag:'Raw',     label:'Raw Notes',    count:raw.length,    value:sum(raw),    isType:true},
+  ];
+  $('dash-split').innerHTML = split.map(c=>chicHTML(c)).join('');
+
+  updateHeaderStats(notes);
+}
+
+function chicHTML(c){
+  const valLine = c.value!=null ? `<div class="chic-value">${fmt$(c.value)}</div>` : `<div class="chic-value">entries logged</div>`;
+  let onclick;
+  if (c.isTx) onclick = `goTransactions()`;
+  else if (c.isType) onclick = `goInventory('type','${c.key}')`;
+  else onclick = `goInventory('status','${c.key}')`;
+  return `<div class="chiclet ${c.cls}" onclick="${onclick}">
+    <div class="chic-top"><span class="chic-icon">${c.icon}</span><span class="chic-tag">${c.tag}</span></div>
+    <div class="chic-count">${c.count}</div>
+    <div class="chic-label">${c.label}</div>
+    ${valLine}
+  </div>`;
+}
+
+function goInventory(kind, val) {
+  // reset filters
+  sv('inv-search',''); sv('inv-ftype',''); sv('inv-fcountry',''); sv('inv-fstatus','');
+  if (kind==='status') sv('inv-fstatus', val);   // '' = all active handled below via flag
+  if (kind==='type') sv('inv-ftype', val);
+  activeFilterLabel = kind==='status'
+    ? (val===''?'All Active Notes':STATUS_LABEL[val])
+    : (val==='certified'?'Graded':'Raw');
+  activeFilterAllActive = (kind==='status' && val==='');
+  showScreen('inventory');
+}
+function goTransactions() {
+  showScreen('transactions');
+  // open history tab
+  document.querySelectorAll('#sc-transactions .tcontent').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('#sc-transactions .stab').forEach(b=>b.classList.remove('active'));
+  $('tx-history').classList.add('active');
+  const tabs=document.querySelectorAll('#sc-transactions .stab'); if(tabs.length) tabs[tabs.length-1].classList.add('active');
+}
+
+// ════════════════════════════════════════════════════════
+//  INVENTORY
+// ════════════════════════════════════════════════════════
+let invViewMode = 'table';
+let activeFilterLabel = '';
+let activeFilterAllActive = false;
+
+function setInvView(v) {
+  invViewMode = v;
+  $('ivt-btn').classList.toggle('active', v==='table');
+  $('ivg-btn').classList.toggle('active', v==='gallery');
+  $('inv-table-wrap').style.display = v==='table' ? 'block' : 'none';
+  $('inv-gallery').style.display = v==='gallery' ? 'grid' : 'none';
+  renderInventory();
+}
+
+function clearInvFilter() {
+  sv('inv-search',''); sv('inv-ftype',''); sv('inv-fcountry',''); sv('inv-fstatus','');
+  activeFilterLabel=''; activeFilterAllActive=false;
+  renderInventory();
+}
+
+async function renderInventory() {
+  const notes = await dbAll('notes');
+  const q = gv('inv-search').toLowerCase();
+  const ft = gv('inv-ftype');
+  const fc = gv('inv-fcountry');
+  const fs = gv('inv-fstatus');
+
+  // Filter pill
+  const pill = $('inv-filt-pill');
+  if (activeFilterLabel) {
+    pill.innerHTML = `<span class="filt-pill">${esc(activeFilterLabel)} <button onclick="clearInvFilter()" title="Clear">✕</button></span>`;
+  } else pill.innerHTML = '';
+
+  // Refresh country filter options
+  const countries = [...new Set(notes.map(n=>n.country).filter(Boolean))].sort();
+  const cf = $('inv-fcountry'); const cfv = cf.value;
+  cf.innerHTML = '<option value="">All Countries</option>' +
+    countries.map(c=>`<option value="${esc(c)}"${c===cfv?' selected':''}>${esc(c)}</option>`).join('');
+
+  const filtered = notes.filter(n => {
+    const stat = n.status||'available';
+    if (activeFilterAllActive && ['sold','donation'].includes(stat)) return false;
+    if (ft && n.type!==ft) return false;
+    if (fc && n.country!==fc) return false;
+    if (fs && stat!==fs) return false;
+    if (q) {
+      const hay = [n.id,n.country,n.denomination,n.issuer,n.serial,n.pick,n.privbank,n.region,n.currency,n.noteDate].join(' ').toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  const isEmpty = filtered.length===0;
+  $('inv-empty').style.display = isEmpty ? 'block' : 'none';
+  $('inv-table-wrap').style.display = (!isEmpty && invViewMode==='table') ? 'block' : 'none';
+  $('inv-gallery').style.display = (!isEmpty && invViewMode==='gallery') ? 'grid' : 'none';
+
+  if (!isEmpty) {
+    if (invViewMode==='table') buildInvTable(filtered);
+    else buildInvGallery(filtered);
+  }
+
+  updateHeaderStats(notes);
+  updateStatCards(notes);
+}
+
+function buildInvTable(notes) {
+  $('inv-tbody').innerHTML = notes.map(n => {
+    const grade = n.type==='certified' ? (n.grade||'—') : (n.condition||'—');
+    const st = n.status||'available';
+    return `<tr>
+      <td class="mono"><span class="badge ${typeBadge(n.type)}">${esc(n.id)}</span></td>
+      <td>${esc(n.country||'—')}</td>
+      <td>${esc(n.region||'—')}</td>
+      <td>${esc(n.denomination||'—')}</td>
+      <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(n.issuer||'')}">${esc(n.issuer||'—')}</td>
+      <td>${esc(n.noteDate||'—')}</td>
+      <td><span class="badge ${typeBadge(n.type)}">${n.type==='certified'?'Graded':'Raw'}</span></td>
+      <td>${esc(grade)}</td>
+      <td>${esc(n.rarity||'—')}</td>
+      <td class="mono">${fmt$(n.cost)}</td>
+      <td class="mono">${fmt$(n.value)}</td>
+      <td><span class="badge ${statusBadge(st)}">${STATUS_LABEL[st]||st}</span></td>
+      <td class="no-print">
+        <div class="btn-row">
+          <button class="btn btn-out btn-xs" onclick="viewNote('${esc(n.id)}')">👁</button>
+          <button class="btn btn-out btn-xs" onclick="editNote('${esc(n.id)}')">✏</button>
+          <button class="btn btn-out btn-xs" onclick="openSellModal('${esc(n.id)}')" ${st==='sold'?'disabled':''}>💰</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function buildInvGallery(notes) {
+  $('inv-gallery').innerHTML = notes.map(n => `
+    <div class="ncard" onclick="viewNote('${esc(n.id)}')">
+      <div class="ncard-img">${n.imgObv ? `<img src="${n.imgObv}" alt="Obverse" loading="lazy">` : '🏦'}</div>
+      <div class="ncard-body">
+        <div class="ncard-id">${esc(n.id)}</div>
+        <div class="ncard-title">${esc(n.country||'')} — ${esc(n.denomination||'')}</div>
+        <div style="font-size:10px;color:var(--muted)">${esc(n.issuer||'')} ${esc(n.noteDate||'')}</div>
+        <div class="ncard-meta">
+          <span class="badge ${statusBadge(n.status||'available')}">${STATUS_LABEL[n.status||'available']}</span>
+          <span class="ncard-val">${fmt$(n.value)}</span>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function typeBadge(t) { return t==='certified' ? 'b-gold' : 'b-blue'; }
+function statusBadge(s) {
+  return {available:'b-green',forsale:'b-teal',pending:'b-orange',sold:'b-red',consigned:'b-purple',donation:'b-blue'}[s]||'b-gray';
+}
+
+function updateHeaderStats(notes) {
+  const active = notes.filter(n=>!['sold','donation'].includes(n.status||'available'));
+  $('hst-total').textContent = active.length;
+  $('hst-value').textContent = '$' + active.reduce((a,n)=>a+(parseFloat(n.value)||0),0).toLocaleString('en-US',{maximumFractionDigits:0});
+  $('hst-graded').textContent = active.filter(n=>n.type==='certified').length;
+}
+
+function updateStatCards(notes) {
+  const active = notes.filter(n=>!['sold','donation'].includes(n.status||'available'));
+  const graded = active.filter(n=>n.type==='certified').length;
+  const raw = active.filter(n=>n.type!=='certified').length;
+  const cost = active.reduce((a,n)=>a+(parseFloat(n.cost)||0),0);
+  const mkt = active.reduce((a,n)=>a+(parseFloat(n.value)||0),0);
+  const pnl = mkt - cost;
+  $('st-total').textContent = active.length;
+  $('st-graded').textContent = graded;
+  $('st-raw').textContent = raw;
+  $('st-cost').textContent = '$'+cost.toLocaleString('en-US',{maximumFractionDigits:0});
+  $('st-mkt').textContent = '$'+mkt.toLocaleString('en-US',{maximumFractionDigits:0});
+  $('st-pnl').textContent = (pnl>=0?'+':'')+'$'+Math.abs(pnl).toLocaleString('en-US',{maximumFractionDigits:0});
+  $('st-pnl').style.color = pnl>=0 ? 'var(--green)' : 'var(--red)';
+}
+
+// ════════════════════════════════════════════════════════
+//  NOTE DETAIL VIEW
+// ════════════════════════════════════════════════════════
+async function viewNote(id) {
+  const n = await dbGet('notes', id);
+  if (!n) return;
+  $('mdet-title').textContent = `${n.id} — ${n.country||''} ${n.denomination||''}`;
+  const rows = [
+    ['Inventory #', `<span class="badge ${typeBadge(n.type)}">${esc(n.id)}</span>`],
+    ['Country', n.country], ['Region / State', n.region], ['Issuer', n.issuer],
+    ['Private Bank', n.privbank], ['Denomination', n.denomination], ['Currency', n.currency],
+    ['Date on Note', n.noteDate], ['Series', n.series], ['Serial #', n.serial],
+    ['Pick #', n.pick], ['Printer', n.printer], ['Signatures', n.sigs],
+    ['Note Type', n.type==='certified'?'Certified / Graded':'Raw / Ungraded'],
+    ...(n.type==='raw' ? [['Raw Category', n.rawcat], ['Condition', n.condition]] : []),
+    ...(n.type==='certified' ? [['Grading Service', n.service], ['Grade', n.grade], ['Cert #', n.certnum], ['Label Designation', n.certlabel]] : []),
+    ['Rarity', n.rarity], ['Size (mm)', n.size], ['Color / Theme', n.color],
+    ['Watermark', n.watermark], ['Security Features', n.security], ['Overprint', n.overprint],
+    ['Acquisition Cost', fmt$(n.cost)], ['Market Value', fmt$(n.value)],
+    ['Asking Price', fmt$(n.asking)], ['Insurance Value', fmt$(n.insurance)],
+    ['Storage Location', n.location], ['Provenance', n.provenance],
+    ['Status', `<span class="badge ${statusBadge(n.status||'available')}">${STATUS_LABEL[n.status||'available']}</span>`],
+    ['Added', n.createdAt ? new Date(n.createdAt).toLocaleDateString() : '']
+  ].filter(([,v])=>v);
+
+  $('mdet-body').innerHTML = `
+    <div class="ndimgs">
+      ${['imgObv','imgRev','imgDet'].map((k,i)=>{
+        const lbl = ['Obverse (Front)','Reverse (Back)','Detail / Seal'][i];
+        return `<div class="ndi"><div class="ndi-lbl">${lbl}</div>${n[k]
+          ? `<img src="${n[k]}" alt="${lbl}" style="display:block;width:100%;height:130px;object-fit:contain;padding:6px">`
+          : '<div class="ndi-ph">No image</div>'}</div>`;
+      }).join('')}
+    </div>
+    <div class="dgrid">${rows.map(([l,v])=>`<div class="ditem"><div class="dl">${esc(l)}</div><div class="dv">${v}</div></div>`).join('')}</div>
+    ${n.description?`<div style="margin-top:12px"><div class="slabel">Description</div><p style="font-size:12px;color:var(--text2);line-height:1.6">${esc(n.description)}</p></div>`:''}
+    ${n.privnotes?`<div style="margin-top:10px"><div class="slabel">Private Notes</div><p style="font-size:12px;color:var(--text2);line-height:1.6">${esc(n.privnotes)}</p></div>`:''}
+    <hr class="sep">
+    <div class="btn-row">
+      <button class="btn btn-gold btn-sm" onclick="closeModal('modal-detail');editNote('${esc(n.id)}')">✏ Edit</button>
+      <button class="btn btn-success btn-sm" onclick="closeModal('modal-detail');openSellModal('${esc(n.id)}')">💰 Sell</button>
+      <button class="btn btn-out btn-sm" onclick="printNoteDetail('${esc(n.id)}')">🖨 Print</button>
+    </div>`;
+  openModal('modal-detail');
+}
+
+// ════════════════════════════════════════════════════════
+//  PMG / PCGS RESEARCH TOOLS
+// ════════════════════════════════════════════════════════
+function _cleanCountry(c){ return String(c||'').replace(/&amp;/g,'and').replace(/[^\w\s-]/g,'').trim(); }
+function _q(){
+  return [_cleanCountry(gv('fn-country')), gv('fn-denom'), gv('fn-notedate')].filter(Boolean).join(' ').trim();
+}
+function _open(url){ window.open(url,'_blank','noopener'); }
+
+function openPMGGuide(){
+  // PMG free World Paper Money Price Guide (official landing page)
+  _open('https://www.pmgnotes.com/priceguide/world-note-price-guide.aspx');
+  const q = _q();
+  if (q) toast('Price Guide opened — search "'+q+'" by Pick #/country');
+  else toast('Tip: fill Country & Denomination first for faster lookup');
+}
+function openPMGCert(){
+  const cert = (gv('fn-certnum')||'').replace(/[^0-9-]/g,'');
+  if (!cert){ _open('https://www.pmgnotes.com/certlookup/'); toast('Tip: enter a Cert / Slab # to look it up directly'); return; }
+  _open('https://www.pmgnotes.com/certlookup/'+encodeURIComponent(cert)+'/');
+}
+function openPMGPop(){
+  const q = _q();
+  _open('https://www.pmgnotes.com/population-report/'+(q?('search/?q='+encodeURIComponent(q)):''));
+}
+function openPCGS(){
+  // PCGS cert verification — direct when a cert # is on hand
+  const cert = (gv('fn-certnum')||'').replace(/[^0-9]/g,'');
+  if (cert){ _open('https://www.pcgs.com/cert/'+encodeURIComponent(cert)); return; }
+  _open('https://www.pcgs.com/cert');
+  toast('Tip: enter a PCGS Cert # for a direct lookup');
+}
+function openCatalogSearch(){
+  const pick = gv('fn-pick');
+  const q = [_cleanCountry(gv('fn-country')), gv('fn-denom'), pick, gv('fn-notedate'),'banknote'].filter(Boolean).join(' ');
+  _open('https://www.google.com/search?q='+encodeURIComponent(q));
+}
+
+// ════════════════════════════════════════════════════════
+//  ADD / EDIT NOTE MODAL
+// ════════════════════════════════════════════════════════
+let noteModalMode = 'add';
+let curImgs = { obv:null, rev:null, det:null };
+
+async function openNoteModal(mode, id) {
+  noteModalMode = mode;
+  $('fn-id').value = id || '';
+  $('tx-section').style.display = mode==='buy' ? 'block' : 'none';
+  $('mn-delete').style.display = mode==='edit' ? 'inline-flex' : 'none';
+
+  const titles = { add:'Add Banknote', buy:'Record Purchase', edit:'Edit Note' };
+  $('mnote-title').textContent = titles[mode] || 'Add Banknote';
+
+  if (mode==='buy') sv('tx-date', today());
+
+  curImgs = { obv:null, rev:null, det:null };
+  resetImgPreviews();
+  stopAllCams();
+  await buildSelects();
+  if (mode!=='edit') { sv('fn-status','available'); sv('fn-type','raw'); sv('fn-invnum',''); }
+  toggleTypeFields();
+
+  if (mode==='edit' && id) {
+    const n = await dbGet('notes', id);
+    if (!n) return;
+    // Fill all fields
+    sv('fn-invnum', n.id||'');
+    sv('fn-country', n.country||''); onCountryChange(false);
+    sv('fn-issuer', n.issuer||''); sv('fn-privbank', n.privbank||'');
+    sv('fn-region', n.region||''); sv('fn-denom', n.denomination||'');
+    sv('fn-currency', n.currency||''); sv('fn-notedate', n.noteDate||'');
+    sv('fn-series', n.series||''); sv('fn-serial', n.serial||'');
+    sv('fn-pick', n.pick||''); sv('fn-printer', n.printer||'');
+    sv('fn-sigs', n.sigs||''); sv('fn-type', n.type||'raw');
+    sv('fn-status', n.status||'available');
+    toggleTypeFields();
+    sv('fn-rawcat', n.rawcat||'issued'); sv('fn-condition', n.condition||'');
+    sv('fn-service', n.service||''); sv('fn-grade', n.grade||'');
+    sv('fn-certnum', n.certnum||''); sv('fn-certlabel', n.certlabel||'');
+    sv('fn-rarity', n.rarity||''); sv('fn-size', n.size||'');
+    sv('fn-color', n.color||''); sv('fn-watermark', n.watermark||'');
+    sv('fn-security', n.security||''); sv('fn-overprint', n.overprint||'');
+    sv('fn-cost', n.cost||''); sv('fn-value', n.value||'');
+    sv('fn-asking', n.asking||''); sv('fn-insurance', n.insurance||'');
+    sv('fn-location', n.location||''); sv('fn-provenance', n.provenance||'');
+    sv('fn-desc', n.description||''); sv('fn-privnotes', n.privnotes||'');
+    curImgs = { obv: n.imgObv||null, rev: n.imgRev||null, det: n.imgDet||null };
+    ['obv','rev','det'].forEach(k => { if (curImgs[k]) setImgPreview(k, curImgs[k]); });
+  }
+  openModal('modal-note');
+}
+
+async function saveNote() {
+  const mode = noteModalMode;
+  const editId = gv('fn-id');
+  const type = gv('fn-type');
+  const override = (gv('fn-invnum')||'').trim();
+
+  let id;
+  if (mode==='edit' && editId) {
+    id = editId;
+    // Allow renaming the inventory # on an existing note
+    if (override && override !== editId) {
+      const clash = await dbGet('notes', override);
+      if (clash) { toast(`Inventory # "${override}" already exists — choose another.`); return; }
+      id = override;
+    }
+  } else if (override) {
+    const clash = await dbGet('notes', override);
+    if (clash) { toast(`Inventory # "${override}" already exists — choose another.`); return; }
+    id = override;
+  } else {
+    id = await nextId(type);
+  }
+
+  // If editing and the ID changed, remove the old record after saving the new one
+  const oldId = (mode==='edit' && editId && id !== editId) ? editId : null;
+
+  const existing = (mode==='edit') ? (await dbGet('notes', editId)) : null;
+  const note = {
+    id,
+    country: gv('fn-country'), region: gv('fn-region'),
+    issuer: gv('fn-issuer'), privbank: gv('fn-privbank'),
+    denomination: gv('fn-denom'), currency: gv('fn-currency'),
+    noteDate: gv('fn-notedate'), series: gv('fn-series'),
+    serial: gv('fn-serial'), pick: gv('fn-pick'),
+    printer: gv('fn-printer'), sigs: gv('fn-sigs'),
+    type,
+    rawcat: gv('fn-rawcat'), condition: gv('fn-condition'),
+    service: gv('fn-service'), grade: gv('fn-grade'),
+    certnum: gv('fn-certnum'), certlabel: gv('fn-certlabel'),
+    rarity: gv('fn-rarity'), size: gv('fn-size'),
+    color: gv('fn-color'), watermark: gv('fn-watermark'),
+    security: gv('fn-security'), overprint: gv('fn-overprint'),
+    cost: gv('fn-cost'), value: gv('fn-value'),
+    asking: gv('fn-asking'), insurance: gv('fn-insurance'),
+    location: gv('fn-location'), provenance: gv('fn-provenance'),
+    description: gv('fn-desc'), privnotes: gv('fn-privnotes'),
+    imgObv: curImgs.obv, imgRev: curImgs.rev, imgDet: curImgs.det,
+    status: gv('fn-status') || existing?.status || 'available',
+    createdAt: existing?.createdAt || Date.now(),
+    updatedAt: Date.now()
+  };
+
+  await dbPut('notes', note);
+
+  // If the inventory # was changed on an existing note, clean up the old record
+  // and re-point any transactions to the new ID.
+  if (oldId) {
+    await dbDel('notes', oldId);
+    const allTx = await dbAll('txs');
+    for (const t of allTx) {
+      if (t.noteId === oldId) { t.noteId = id; await dbPut('txs', t); }
+    }
+  }
+
+  // Log buy transaction
+  if (mode==='buy') {
+    const price = parseFloat(gv('tx-price')||0);
+    const prem = parseFloat(gv('tx-premium')||0);
+    const ship = parseFloat(gv('tx-ship')||0);
+    const fees = parseFloat(gv('tx-fees')||0);
+    await dbPut('txs', {
+      txtype:'buy', noteId:id,
+      date: gv('tx-date')||today(),
+      counterparty: gv('tx-seller'),
+      srctype: gv('tx-srctype'),
+      lot: gv('tx-lot'),
+      amount: price, premium: prem, shipping: ship, otherfees: fees,
+      total: price+prem+ship+fees,
+      country: note.country, denomination: note.denomination,
+      txnotes: ''
+    });
+  }
+
+  stopAllCams();
+  closeModal('modal-note');
+  toast(mode==='edit' ? `Note ${id} updated ✓` : `Note ${id} added ✓`);
+  if (currentScreen==='dashboard') renderDashboard();
+  else renderInventory();
+}
+
+async function editNote(id) { await openNoteModal('edit', id); }
+
+async function deleteNote() {
+  const id = gv('fn-id');
+  if (!id) return;
+  if (!confirm(`Delete note ${id}?\nThis cannot be undone.`)) return;
+  await dbDel('notes', id);
+  stopAllCams();
+  closeModal('modal-note');
+  toast(`Note ${id} deleted`);
+  if (currentScreen==='dashboard') renderDashboard(); else renderInventory();
+}
+
+// ════════════════════════════════════════════════════════
+//  TYPE FIELD TOGGLE
+// ════════════════════════════════════════════════════════
+function toggleTypeFields() {
+  const raw = gv('fn-type') === 'raw';
+  $('fg-rawcat').style.display = raw ? '' : 'none';
+  $('fg-condition').style.display = raw ? '' : 'none';
+  $('fg-service').style.display = raw ? 'none' : '';
+  $('fg-grade').style.display = raw ? 'none' : '';
+  $('fg-certnum').style.display = raw ? 'none' : '';
+  $('fg-certlabel').style.display = raw ? 'none' : '';
+}
+
+// ════════════════════════════════════════════════════════
+//  SELECT BUILDERS
+// ════════════════════════════════════════════════════════
+async function buildSelects() {
+  const cs = $('fn-country');
+  const curC = cs.value;
+  cs.innerHTML = '<option value="">-- Select --</option>' +
+    ref.countries.sort().map(c=>`<option value="${esc(c)}"${c===curC?' selected':''}>${esc(c)}</option>`).join('');
+
+  const ps = $('fn-printer');
+  const curP = ps.value;
+  ps.innerHTML = '<option value="">-- None --</option>' +
+    ref.printers.sort().map(p=>`<option value="${esc(p)}"${p===curP?' selected':''}>${esc(p)}</option>`).join('');
+
+  buildIssuerSelects(curC);
+
+  const rc = $('rptinv-country');
+  if (rc) {
+    const curRC = rc.value;
+    rc.innerHTML = '<option value="">All Countries</option>' +
+      ref.countries.sort().map(c=>`<option value="${esc(c)}"${c===curRC?' selected':''}>${esc(c)}</option>`).join('');
+  }
+}
+
+function buildIssuerSelects(country) {
+  const issuers = (ref.issuers[country]||[]).slice().sort();
+  const privbanks = (ref.privbanks[country]||[]).slice().sort();
+  const curI = gv('fn-issuer');
+  const curB = gv('fn-privbank');
+
+  $('fn-issuer').innerHTML = '<option value="">-- Select --</option>' +
+    issuers.map(b=>`<option value="${esc(b)}"${b===curI?' selected':''}>${esc(b)}</option>`).join('');
+
+  $('fn-privbank').innerHTML = '<option value="">-- None --</option>' +
+    privbanks.map(b=>`<option value="${esc(b)}"${b===curB?' selected':''}>${esc(b)}</option>`).join('');
+}
+
+function onCountryChange(resetSubs=true) {
+  const country = gv('fn-country');
+  if (resetSubs) { sv('fn-issuer',''); sv('fn-privbank',''); }
+  buildIssuerSelects(country);
+}
+
+// ════════════════════════════════════════════════════════
+//  ADD ITEM MODAL
+// ════════════════════════════════════════════════════════
+let addItemType = '';
+function addItem(type) {
+  addItemType = type;
+  const labels = { country:'New Country', issuer:'New Issuing Authority / Bank', privbank:'New Private Bank of Emission', printer:'New Printing Company' };
+  $('mai-title').textContent = labels[type] || 'Add Item';
+  const country = gv('fn-country');
+  let extra = '';
+  if ((type==='issuer'||type==='privbank') && country)
+    extra = `<p style="font-size:11px;color:var(--muted);margin-top:6px">Country: <strong style="color:var(--text)">${esc(country)}</strong></p>`;
+  $('mai-body').innerHTML = `<div class="fg"><label>Name</label><input id="mai-name" placeholder="Enter name…" autocomplete="off"></div>${extra}`;
+  openModal('modal-additem');
+  setTimeout(() => { const el=$('mai-name'); if(el) el.focus(); }, 80);
+}
+
+async function saveAddItem() {
+  const name = ($('mai-name')||{}).value?.trim();
+  if (!name) { toast('Please enter a name'); return; }
+  const country = gv('fn-country');
+
+  if (addItemType==='country') {
+    if (!ref.countries.includes(name)) ref.countries.push(name);
+  } else if (addItemType==='issuer') {
+    if (!ref.issuers[country]) ref.issuers[country] = [];
+    if (!ref.issuers[country].includes(name)) ref.issuers[country].push(name);
+  } else if (addItemType==='privbank') {
+    if (!ref.privbanks[country]) ref.privbanks[country] = [];
+    if (!ref.privbanks[country].includes(name)) ref.privbanks[country].push(name);
+  } else if (addItemType==='printer') {
+    if (!ref.printers.includes(name)) ref.printers.push(name);
+  }
+  await saveRef();
+  await buildSelects();
+
+  if (addItemType==='country') { sv('fn-country',name); onCountryChange(); }
+  else if (addItemType==='issuer') sv('fn-issuer',name);
+  else if (addItemType==='privbank') sv('fn-privbank',name);
+  else if (addItemType==='printer') sv('fn-printer',name);
+
+  closeModal('modal-additem');
+  toast(`"${name}" added ✓`);
+}
+
+// ════════════════════════════════════════════════════════
+//  IMAGE HANDLING — UPLOAD / FILE-CAPTURE
+// ════════════════════════════════════════════════════════
+// "Camera" button: iPhone/iPad use the native capture input (the `capture`
+// attribute only works there). On a MacBook/desktop the attribute is ignored
+// and would just reopen a file picker, so route to the live webcam instead.
+const IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+  || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+function cameraBtn(key) {
+  if (IS_IOS) $('cap-'+key).click();
+  else startCam(key);
+}
+
+function handleUpload(e, key) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    curImgs[key] = ev.target.result;
+    setImgPreview(key, ev.target.result);
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+}
+
+function setImgPreview(key, src) {
+  $('prev-'+key).innerHTML = `<div class="iprev-item">
+    <img src="${src}" alt="${key}">
+    <button class="del-img" onclick="clearImg('${key}')">✕</button>
+  </div>`;
+}
+
+function clearImg(key) {
+  curImgs[key] = null;
+  $('prev-'+key).innerHTML = '<div class="iup-placeholder">📷 No image yet</div>';
+}
+
+function resetImgPreviews() {
+  ['obv','rev','det'].forEach(k => clearImg(k));
+}
+
+// ════════════════════════════════════════════════════════
+//  WEBCAM CAPTURE (MacBook Pro / connected webcam)
+// ════════════════════════════════════════════════════════
+let camStreams = { obv:null, rev:null, det:null };
+
+async function startCam(key) {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    toast('Camera API not available in this browser.'); return;
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'environment', width:{ideal:1920}, height:{ideal:1080} }, audio:false });
+    camStreams[key] = stream;
+    const vid = $('vid-'+key);
+    vid.srcObject = stream;
+    $('cam-'+key).classList.add('open');
+  } catch(err) {
+    toast('Could not access camera: '+err.message, 5000);
+  }
+}
+
+function snapCam(key) {
+  const vid = $('vid-'+key);
+  if (!vid || !vid.videoWidth) { toast('Camera not ready yet'); return; }
+  const canvas = document.createElement('canvas');
+  canvas.width = vid.videoWidth; canvas.height = vid.videoHeight;
+  canvas.getContext('2d').drawImage(vid, 0, 0);
+  const data = canvas.toDataURL('image/jpeg', 0.92);
+  curImgs[key] = data;
+  setImgPreview(key, data);
+  stopCam(key);
+  toast('Image captured ✓');
+}
+
+function stopCam(key) {
+  if (camStreams[key]) { camStreams[key].getTracks().forEach(t=>t.stop()); camStreams[key]=null; }
+  const w = $('cam-'+key); if (w) w.classList.remove('open');
+  const vid = $('vid-'+key); if (vid) vid.srcObject = null;
+}
+function stopAllCams(){ ['obv','rev','det'].forEach(stopCam); }
+
+// ════════════════════════════════════════════════════════
+//  SELL MODAL
+// ════════════════════════════════════════════════════════
+async function openSellModal(id) {
+  const n = await dbGet('notes', id);
+  if (!n) return;
+  if ((n.status||'available')==='sold') { toast('This note is already sold.'); return; }
+  $('sell-noteid').value = id;
+  sv('sell-date', today());
+  $('sell-noteinfo').innerHTML = `
+    <div style="display:flex;gap:14px;align-items:center">
+      ${n.imgObv?`<img src="${n.imgObv}" style="width:75px;height:48px;object-fit:cover;border-radius:3px;border:1px solid var(--border)">`:''}
+      <div>
+        <div class="mono" style="color:var(--gold);font-size:11px">${esc(n.id)}</div>
+        <div style="font-size:13px;font-weight:600">${esc(n.country||'')} — ${esc(n.denomination||'')}</div>
+        <div style="font-size:11px;color:var(--muted)">${esc(n.issuer||'')} ${esc(n.noteDate||'')}</div>
+        <div style="font-size:11px;color:var(--muted)">Cost: ${fmt$(n.cost)} &nbsp;|&nbsp; Est. Value: ${fmt$(n.value)}</div>
+      </div>
+    </div>`;
+  ['sell-buyer','sell-comm','sell-fees','sell-txnotes'].forEach(id=>sv(id,''));
+  sv('sell-price','');
+  openModal('modal-sell');
+}
+
+async function completeSale(saleStatus) {
+  const noteId = gv('sell-noteid');
+  if (!noteId) return;
+  const price = parseFloat(gv('sell-price')||0);
+  const comm = parseFloat(gv('sell-comm')||0);
+  const fees = parseFloat(gv('sell-fees')||0);
+  const net = price - comm - fees;
+
+  const n = await dbGet('notes', noteId);
+  if (!n) return;
+  n.status = saleStatus==='sold' ? 'sold' : 'pending';
+  n.updatedAt = Date.now();
+  await dbPut('notes', n);
+
+  await dbPut('txs', {
+    txtype:'sell', noteId,
+    date: gv('sell-date')||today(),
+    counterparty: gv('sell-buyer'),
+    platform: gv('sell-platform'),
+    amount: price, commission: comm, otherfees: fees, net,
+    country: n.country, denomination: n.denomination,
+    saleStatus,
+    txnotes: gv('sell-txnotes')
+  });
+
+  closeModal('modal-sell');
+  toast(saleStatus==='sold' ? 'Sale completed ✓' : 'Sale marked as pending ✓');
+  if (currentScreen==='inventory') renderInventory();
+  if (currentScreen==='dashboard') renderDashboard();
+  if (currentScreen==='transactions') refreshAllTxTabs();
+}
+
+// ════════════════════════════════════════════════════════
+//  CONSIGN
+// ════════════════════════════════════════════════════════
+async function populateNoteSelects() {
+  const notes = await dbAll('notes');
+  const avail = notes.filter(n => ['available','forsale','pending'].includes(n.status||'available'));
+  const opts = '<option value="">-- Select Note --</option>' +
+    avail.map(n=>`<option value="${esc(n.id)}">${esc(n.id)} — ${esc(n.country||'')} ${esc(n.denomination||'')}</option>`).join('');
+  $('co-note').innerHTML = opts;
+  $('up-note').innerHTML = opts;
+  // donate can include any non-sold note
+  const donatable = notes.filter(n => (n.status||'available')!=='sold');
+  $('dn-note').innerHTML = '<option value="">-- Select Note --</option>' +
+    donatable.map(n=>`<option value="${esc(n.id)}">${esc(n.id)} — ${esc(n.country||'')} ${esc(n.denomination||'')}</option>`).join('');
+}
+
+async function recordConsign() {
+  const noteId = gv('co-note');
+  if (!noteId) { toast('Please select a note'); return; }
+  const n = await dbGet('notes', noteId);
+  if (!n) return;
+  n.status = 'consigned'; n.updatedAt = Date.now();
+  await dbPut('notes', n);
+  await dbPut('txs', {
+    txtype:'consign', noteId,
+    date: gv('co-date')||today(),
+    counterparty: gv('co-house'),
+    reserve: gv('co-reserve'),
+    commRate: gv('co-rate'),
+    returnDate: gv('co-return'),
+    txnotes: gv('co-notes'),
+    country: n.country, denomination: n.denomination
+  });
+  sv('co-note',''); sv('co-house',''); sv('co-date',''); sv('co-reserve',''); sv('co-rate',''); sv('co-return',''); sv('co-notes','');
+  toast('Consignment recorded ✓');
+  await renderConsignTab();
+  if (currentScreen==='inventory') renderInventory();
+}
+
+async function renderConsignTab() {
+  await populateNoteSelects();
+  const txs = await dbAll('txs');
+  const cons = txs.filter(t=>t.txtype==='consign').sort((a,b)=>b.txid-a.txid);
+  $('co-empty').style.display = cons.length===0?'block':'none';
+  $('co-tbody').innerHTML = cons.map(t=>`<tr>
+    <td>${esc(t.date||'')}</td>
+    <td class="mono"><span class="badge b-purple">${esc(t.noteId)}</span></td>
+    <td>${esc(t.country||'—')}</td><td>${esc(t.denomination||'—')}</td>
+    <td>${esc(t.counterparty||'—')}</td>
+    <td class="mono">${fmt$(t.reserve)}</td>
+    <td>${esc(t.commRate||'—')}%</td>
+    <td>${esc(t.returnDate||'—')}</td>
+    <td style="font-size:11px">${esc(t.txnotes||'')}</td>
+  </tr>`).join('');
+}
+
+// ════════════════════════════════════════════════════════
+//  DONATE
+// ════════════════════════════════════════════════════════
+async function recordDonation() {
+  const noteId = gv('dn-note');
+  if (!noteId) { toast('Please select a note'); return; }
+  const n = await dbGet('notes', noteId);
+  if (!n) return;
+  n.status = 'donation'; n.updatedAt = Date.now();
+  await dbPut('notes', n);
+  await dbPut('txs', {
+    txtype:'donate', noteId,
+    date: gv('dn-date')||today(),
+    counterparty: gv('dn-org'),
+    fmv: gv('dn-fmv'),
+    amount: parseFloat(gv('dn-fmv')||0),
+    receipt: gv('dn-receipt'),
+    taxYear: gv('dn-year'),
+    txnotes: gv('dn-notes'),
+    country: n.country, denomination: n.denomination
+  });
+  sv('dn-note',''); sv('dn-org',''); sv('dn-date',''); sv('dn-fmv',''); sv('dn-receipt',''); sv('dn-year',''); sv('dn-notes','');
+  toast('Donation recorded ✓');
+  await renderDonateTab();
+  if (currentScreen==='inventory') renderInventory();
+  if (currentScreen==='dashboard') renderDashboard();
+}
+
+async function renderDonateTab() {
+  await populateNoteSelects();
+  const txs = await dbAll('txs');
+  const dons = txs.filter(t=>t.txtype==='donate').sort((a,b)=>b.txid-a.txid);
+  $('dn-empty').style.display = dons.length===0?'block':'none';
+  $('dn-tbody').innerHTML = dons.map(t=>`<tr>
+    <td>${esc(t.date||'')}</td>
+    <td class="mono"><span class="badge b-teal">${esc(t.noteId)}</span></td>
+    <td>${esc(t.country||'—')}</td><td>${esc(t.denomination||'—')}</td>
+    <td>${esc(t.counterparty||'—')}</td>
+    <td class="mono">${fmt$(t.fmv)}</td>
+    <td class="mono">${esc(t.receipt||'—')}</td>
+    <td>${esc(t.taxYear||'—')}</td>
+    <td style="font-size:11px">${esc(t.txnotes||'')}</td>
+  </tr>`).join('');
+}
+
+// ════════════════════════════════════════════════════════
+//  UPGRADE
+// ════════════════════════════════════════════════════════
+async function recordUpgrade() {
+  const noteId = gv('up-note');
+  if (!noteId) { toast('Please select a note'); return; }
+  const n = await dbGet('notes', noteId);
+  if (!n) return;
+  const oldGrade = n.type==='certified' ? n.grade : (n.condition||'Raw');
+  const newGradeRaw = gv('up-grade');
+  const newGrade = newGradeRaw ? newGradeRaw.split(' ')[0] : '';
+
+  if (newGrade) {
+    n.type = 'certified';
+    n.grade = newGrade;
+    n.service = gv('up-service');
+    n.certnum = gv('up-cert');
+    n.updatedAt = Date.now();
+    await dbPut('notes', n);
+  }
+  await dbPut('txs', {
+    txtype:'upgrade', noteId,
+    date: gv('up-date')||today(),
+    counterparty: gv('up-service'),
+    fee: gv('up-fee'),
+    oldGrade,
+    newGrade: newGrade||'Pending',
+    certnum: gv('up-cert'),
+    txnotes: gv('up-notes'),
+    country: n.country, denomination: n.denomination
+  });
+  sv('up-note',''); sv('up-fee',''); sv('up-grade',''); sv('up-cert',''); sv('up-notes','');
+  toast('Upgrade submission recorded ✓');
+  await renderUpgradeTab();
+  if (currentScreen==='inventory') renderInventory();
+}
+
+async function renderUpgradeTab() {
+  await populateNoteSelects();
+  const txs = await dbAll('txs');
+  const ups = txs.filter(t=>t.txtype==='upgrade').sort((a,b)=>b.txid-a.txid);
+  $('up-empty').style.display = ups.length===0?'block':'none';
+  $('up-tbody').innerHTML = ups.map(t=>`<tr>
+    <td>${esc(t.date||'')}</td>
+    <td class="mono"><span class="badge b-gray">${esc(t.noteId)}</span></td>
+    <td>${esc(t.country||'—')}</td><td>${esc(t.denomination||'—')}</td>
+    <td>${esc(t.counterparty||'—')}</td>
+    <td class="mono">${fmt$(t.fee)}</td>
+    <td>${esc(t.oldGrade||'—')}</td>
+    <td style="color:var(--gold2)">${esc(t.newGrade||'Pending')}</td>
+    <td class="mono">${esc(t.certnum||'—')}</td>
+  </tr>`).join('');
+}
+
+// ════════════════════════════════════════════════════════
+//  BUY / SELL TABS
+// ════════════════════════════════════════════════════════
+async function renderBuyTab() {
+  const txs = await dbAll('txs');
+  const buys = txs.filter(t=>t.txtype==='buy').sort((a,b)=>b.txid-a.txid);
+  $('buy-empty').style.display = buys.length===0?'block':'none';
+  $('buy-tbody').innerHTML = buys.map(t=>`<tr>
+    <td>${esc(t.date||'')}</td>
+    <td class="mono"><span class="badge b-gray">${esc(t.noteId)}</span></td>
+    <td>${esc(t.country||'—')}</td><td>${esc(t.denomination||'—')}</td>
+    <td>${esc(t.counterparty||'—')}</td>
+    <td>${esc(t.srctype||'—')}</td>
+    <td class="mono">${fmt$(t.amount)}</td>
+    <td class="mono">${fmt$(( (t.premium||0)+(t.shipping||0)+(t.otherfees||0) ))}</td>
+    <td class="mono" style="color:var(--gold2)">${fmt$(t.total)}</td>
+  </tr>`).join('');
+}
+
+async function renderSellTab() {
+  const notes = await dbAll('notes');
+  const txs = await dbAll('txs');
+  const avail = notes.filter(n=>['available','forsale'].includes(n.status||'available'));
+  $('sell-avail-empty').style.display = avail.length===0?'block':'none';
+  $('sell-avail').innerHTML = avail.map(n=>`<tr>
+    <td class="mono"><span class="badge ${typeBadge(n.type)}">${esc(n.id)}</span></td>
+    <td>${esc(n.country||'—')}</td><td>${esc(n.denomination||'—')}</td>
+    <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(n.issuer||'—')}</td>
+    <td><span class="badge ${typeBadge(n.type)}">${n.type==='certified'?'Graded':'Raw'}</span></td>
+    <td>${esc(n.type==='certified'?(n.grade||'—'):(n.condition||'—'))}</td>
+    <td class="mono">${fmt$(n.cost)}</td>
+    <td class="mono">${fmt$(n.value)}</td>
+    <td><span class="badge ${statusBadge(n.status||'available')}">${STATUS_LABEL[n.status||'available']}</span></td>
+    <td class="no-print"><button class="btn btn-gold btn-xs" onclick="openSellModal('${esc(n.id)}')">Sell</button></td>
+  </tr>`).join('');
+
+  const sales = txs.filter(t=>t.txtype==='sell').sort((a,b)=>b.txid-a.txid);
+  $('sell-hist-empty').style.display = sales.length===0?'block':'none';
+  $('sell-hist').innerHTML = sales.map(t=>`<tr>
+    <td>${esc(t.date||'')}</td>
+    <td class="mono"><span class="badge b-gray">${esc(t.noteId)}</span></td>
+    <td>${esc(t.country||'—')}</td><td>${esc(t.denomination||'—')}</td>
+    <td>${esc(t.counterparty||'—')}</td>
+    <td>${esc(t.platform||'—')}</td>
+    <td class="mono">${fmt$(t.amount)}</td>
+    <td class="mono">${fmt$((t.commission||0)+(t.otherfees||0))}</td>
+    <td class="mono" style="color:var(--green)">${fmt$(t.net)}</td>
+    <td><span class="badge ${t.saleStatus==='sold'?'b-red':'b-orange'}">${t.saleStatus||t.status||'pending'}</span></td>
+    <td class="no-print">${(t.saleStatus||t.status)==='pending'
+      ?`<button class="btn btn-success btn-xs" onclick="markSaleComplete(${t.txid},'${esc(t.noteId)}')">Complete</button>`:'—'}</td>
+  </tr>`).join('');
+}
+
+async function markSaleComplete(txid, noteId) {
+  const txs = await dbAll('txs');
+  const tx = txs.find(t=>t.txid===txid);
+  if (!tx) return;
+  tx.saleStatus = 'sold';
+  await dbPut('txs', tx);
+  const n = await dbGet('notes', noteId);
+  if (n) { n.status='sold'; n.updatedAt=Date.now(); await dbPut('notes', n); }
+  toast('Sale completed ✓');
+  await renderSellTab();
+  renderInventory();
+}
+
+async function renderTxHistory() {
+  const txs = await dbAll('txs');
+  const q = gv('txh-search').toLowerCase();
+  const tf = gv('txh-type');
+  const filtered = txs.filter(t => {
+    if (tf && t.txtype!==tf) return false;
+    if (q) {
+      const hay = [t.txtype,t.noteId,t.country,t.denomination,t.counterparty,t.platform,t.txnotes].join(' ').toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  }).sort((a,b)=>b.txid-a.txid);
+
+  $('txh-empty').style.display = filtered.length===0?'block':'none';
+  const colors = {buy:'b-green',sell:'b-red',consign:'b-purple',upgrade:'b-blue',donate:'b-teal'};
+  $('txh-tbody').innerHTML = filtered.map(t => {
+    const amt = t.total||t.amount||t.fee||t.fmv||0;
+    const fees = (t.premium||0)+(t.shipping||0)+(t.commission||0)+(t.otherfees||0);
+    const net = t.net||t.total||t.amount||t.fmv||0;
+    return `<tr>
+      <td>${esc(t.date||'')}</td>
+      <td><span class="badge ${colors[t.txtype]||'b-gray'}">${(t.txtype||'').toUpperCase()}</span></td>
+      <td class="mono">${esc(t.noteId||'')}</td>
+      <td>${esc(t.country||'—')}</td><td>${esc(t.denomination||'—')}</td>
+      <td>${esc(t.counterparty||'—')}</td>
+      <td class="mono">${fmt$(amt)}</td>
+      <td class="mono">${fmt$(fees)}</td>
+      <td class="mono" style="color:var(--gold2)">${fmt$(net)}</td>
+      <td style="font-size:11px;color:var(--muted)">${esc(t.txnotes||t.lot||t.receipt||'')}</td>
+    </tr>`;
+  }).join('');
+}
+
+async function refreshAllTxTabs() {
+  await renderBuyTab();
+  await renderSellTab();
+  await renderConsignTab();
+  await renderUpgradeTab();
+  await renderDonateTab();
+  await renderTxHistory();
+}
+
+// ════════════════════════════════════════════════════════
+//  AUCTIONS
+// ════════════════════════════════════════════════════════
+const AUCTIONS = [
+  {name:'Heritage Auctions',country:'USA',spec:'World Paper Money, US Currency',url:'https://www.ha.com/c/search-results.zx?N=790+231',desc:'The world\'s largest numismatic auctioneer with major world banknote &amp; currency sales multiple times per year.'},
+  {name:'Stack\'s Bowers Galleries',country:'USA',spec:'World &amp; US Banknotes',url:'https://www.stacksbowers.com/currency/',desc:'Premier auction house with prestige world currency sales, including major specialized offerings.'},
+  {name:'Spink',country:'UK / Singapore / Hong Kong',spec:'World Banknotes, British Notes',url:'https://www.spink.com/department/banknotes',desc:'London-based since 1666. Global banknote sales, especially strong in British, Asian, and Commonwealth notes.'},
+  {name:'Lyn Knight Currency Auctions',country:'USA',spec:'US &amp; World Currency',url:'https://www.lynknight.com',desc:'Specialist currency auctioneer focusing on US large-size, small-size, and world paper money.'},
+  {name:'Archives International Auctions',country:'USA',spec:'Obsolete, Confederate &amp; World',url:'https://www.archivesinternational.com',desc:'Specializes in obsolete US currency, Confederate notes, scrip, and world banknotes.'},
+  {name:'Sedwick Coins',country:'USA',spec:'Latin American &amp; Treasure Currency',url:'https://www.sedwickcoins.com',desc:'Specialists in treasure, Latin American &amp; Caribbean coins and banknotes, including Mexican Revolution notes.'},
+  {name:'PMG (Paper Money Guaranty)',country:'USA — Grading',spec:'Grading &amp; Set Registry',url:'https://www.pmgnotes.com',desc:'The world\'s leading paper money grading service. Population reports and set registry for certified notes.'},
+  {name:'PCGS Banknote',country:'USA — Grading',spec:'Grading &amp; Registry',url:'https://www.pcgsbanknote.com',desc:'PCGS currency division with banknote certification, population reports, and set registry.'},
+  {name:'Münzen &amp; Medaillen (MuM)',country:'Germany / Switzerland',spec:'European &amp; World Banknotes',url:'https://www.mmonline.de',desc:'Prestigious European firm with significant coins, medals, and banknote auction sales.'},
+  {name:'Maison Palombo',country:'Monaco / France',spec:'World Banknotes &amp; Coins',url:'https://www.palombo.mc',desc:'Monaco-based auction house specializing in rare world banknotes, historical documents, and numismatics.'},
+  {name:'Jean Elsen &amp; ses Fils',country:'Belgium',spec:'European Banknotes',url:'https://www.elsen.eu',desc:'Brussels-based numismatic auction house with European coins and paper money offerings.'},
+  {name:'Spink &amp; Son Asia',country:'Hong Kong',spec:'Asian Banknotes',url:'https://www.spinkchina.com',desc:'Spink\'s Hong Kong operation with focused Asian — especially Chinese &amp; Japanese — banknote auctions.'},
+  {name:'Gorny &amp; Mosch',country:'Germany',spec:'European &amp; World',url:'https://www.gmcoinart.de',desc:'Munich-based auction house with world numismatics including historical German and European notes.'},
+  {name:'Agora Numismatique',country:'France',spec:'French &amp; World Notes',url:'https://www.agora-numismatique.com',desc:'French platform with a broad range of world paper money auction offerings.'},
+  {name:'Baldwin\'s of St. James\'s',country:'UK',spec:'British &amp; World Notes',url:'https://www.baldwins.com/banknotes',desc:'One of the oldest numismatic firms in the world — London-based, established 1872.'},
+  {name:'Numismatica Genevensis',country:'Switzerland',spec:'European &amp; World',url:'https://www.numismaticagenevensis.com',desc:'Geneva-based prestige auction with world coins and banknotes offered in significant sales.'},
+  {name:'Ira &amp; Larry Goldberg Coins &amp; Collectibles',country:'USA',spec:'World Currency',url:'https://www.goldbergcoins.com',desc:'Beverly Hills auctioneer with world currency and banknote sale offerings.'},
+  {name:'Bonhams',country:'UK / USA / Global',spec:'World Currency (Occasional)',url:'https://www.bonhams.com/departments/NUM/',desc:'International auction house with occasional major world currency and numismatics sales.'},
+  {name:'IBNS (International Bank Note Society)',country:'International',spec:'Research, Community &amp; Auctions',url:'https://www.theibns.org',desc:'Premier international organization for banknote collectors — member auctions, journal, census, &amp; resources.'},
+  {name:'Numisbids',country:'Europe — Aggregator',spec:'Multi-Dealer &amp; Auction Aggregator',url:'https://www.numisbids.com',desc:'Online platform aggregating European numismatic auction catalogs including world banknote offerings.'},
+  {name:'Sixbid',country:'International — Aggregator',spec:'Global Auction Aggregator',url:'https://www.sixbid.com',desc:'Global auction aggregator covering paper money, coins, medals, and tokens from hundreds of houses.'}
+];
+
+function renderAuctions() {
+  $('agrid').innerHTML = AUCTIONS.map(a=>`
+    <div class="acard">
+      <div class="acard-name">${a.name}</div>
+      <div class="acard-country">📍 ${a.country}</div>
+      <div><span class="badge b-blue" style="font-size:9px">${a.spec}</span></div>
+      <div class="acard-desc">${a.desc}</div>
+      <a href="${a.url}" target="_blank" rel="noopener noreferrer">🔗 Visit Website →</a>
+    </div>`).join('');
+}
+
+// ════════════════════════════════════════════════════════
+//  REPORTS
+// ════════════════════════════════════════════════════════
+let rptViewMode = 'list';
+function setRptView(v) {
+  rptViewMode = v;
+  $('rptl-btn').classList.toggle('active', v==='list');
+  $('rptg-btn').classList.toggle('active', v==='gallery');
+  renderInvReport();
+}
+
+async function renderInvReport() {
+  const notes = await dbAll('notes');
+  const ft = gv('rptinv-type');
+  const fc = gv('rptinv-country');
+  const fs = gv('rptinv-status');
+
+  const countries = [...new Set(notes.map(n=>n.country).filter(Boolean))].sort();
+  const rc = $('rptinv-country'); const rcv = rc.value;
+  rc.innerHTML = '<option value="">All Countries</option>' +
+    countries.map(c=>`<option value="${esc(c)}"${c===rcv?' selected':''}>${esc(c)}</option>`).join('');
+
+  const filtered = notes.filter(n=>{
+    if (ft && n.type!==ft) return false;
+    if (fc && n.country!==fc) return false;
+    if (fs && (n.status||'available')!==fs) return false;
+    return true;
+  });
+
+  const c = $('rptinv-content');
+  if (!filtered.length) { c.innerHTML='<div class="empty"><div class="ei">📋</div><p>No notes match the filter.</p></div>'; return; }
+
+  if (rptViewMode==='gallery') {
+    c.innerHTML = `<div class="ngrid">${filtered.map(n=>`
+      <div class="ncard" onclick="viewNote('${esc(n.id)}')">
+        <div class="ncard-img">${n.imgObv?`<img src="${n.imgObv}" alt="Obverse" loading="lazy">`:'🏦'}</div>
+        <div class="ncard-body">
+          <div class="ncard-id">${esc(n.id)}</div>
+          <div class="ncard-title">${esc(n.country||'')} — ${esc(n.denomination||'')}</div>
+          <div style="font-size:10px;color:var(--muted)">${esc(n.issuer||'')} ${esc(n.noteDate||'')}</div>
+          <div class="ncard-meta">
+            <span class="badge ${statusBadge(n.status||'available')}">${STATUS_LABEL[n.status||'available']}</span>
+            <span class="ncard-val">${fmt$(n.value)}</span>
+          </div>
+        </div>
+      </div>`).join('')}</div>`;
+  } else {
+    c.innerHTML = `<div class="dt-wrap"><table class="dt">
+      <thead><tr><th>Inv #</th><th>Country</th><th>Region</th><th>Issuer</th><th>Denomination</th><th>Date</th><th>Type</th><th>Grade/Cond.</th><th>Rarity</th><th>Pick #</th><th>Cost</th><th>Value</th><th>Status</th></tr></thead>
+      <tbody>${filtered.map(n=>`<tr>
+        <td class="mono"><span class="badge ${typeBadge(n.type)}">${esc(n.id)}</span></td>
+        <td>${esc(n.country||'—')}</td><td>${esc(n.region||'—')}</td>
+        <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(n.issuer||'—')}</td>
+        <td>${esc(n.denomination||'—')}</td><td>${esc(n.noteDate||'—')}</td>
+        <td>${n.type==='certified'?'Graded':'Raw'}</td>
+        <td>${esc(n.type==='certified'?(n.grade||'—'):(n.condition||'—'))}</td>
+        <td>${esc(n.rarity||'—')}</td><td>${esc(n.pick||'—')}</td>
+        <td class="mono">${fmt$(n.cost)}</td><td class="mono">${fmt$(n.value)}</td>
+        <td><span class="badge ${statusBadge(n.status||'available')}">${STATUS_LABEL[n.status||'available']}</span></td>
+      </tr>`).join('')}</tbody>
+    </table></div>
+    <div style="margin-top:10px;font-size:11px;color:var(--muted)">
+      ${filtered.length} notes &nbsp;|&nbsp; Total Cost: ${fmt$(filtered.reduce((a,n)=>a+(parseFloat(n.cost)||0),0))} &nbsp;|&nbsp; Total Value: ${fmt$(filtered.reduce((a,n)=>a+(parseFloat(n.value)||0),0))}
+    </div>`;
+  }
+}
+
+async function renderColReport() {
+  const notes = await dbAll('notes');
+  const by = {};
+  notes.forEach(n=>{ const k=n.country||'Unknown'; if(!by[k])by[k]=[]; by[k].push(n); });
+  const c = $('rptcol-content');
+  if (!Object.keys(by).length) { c.innerHTML='<div class="empty"><div class="ei">📋</div><p>No notes.</p></div>'; return; }
+  c.innerHTML = Object.entries(by).sort(([a],[b])=>a.localeCompare(b)).map(([country,ns])=>`
+    <div style="margin-bottom:18px">
+      <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);margin-bottom:8px">
+        <strong style="font-family:'Playfair Display',serif;color:var(--gold2)">${esc(country)}</strong>
+        <span class="badge b-gray">${ns.length} note${ns.length!==1?'s':''}</span>
+        <span style="color:var(--muted);font-size:11px">${fmt$(ns.reduce((a,n)=>a+(parseFloat(n.value)||0),0))}</span>
+      </div>
+      <div class="dt-wrap"><table class="dt">
+        <thead><tr><th>Inv #</th><th>Issuer</th><th>Denom.</th><th>Date</th><th>Type</th><th>Grade</th><th>Rarity</th><th>Cost</th><th>Value</th><th>Status</th></tr></thead>
+        <tbody>${ns.map(n=>`<tr>
+          <td class="mono">${esc(n.id)}</td>
+          <td>${esc(n.issuer||'—')}</td><td>${esc(n.denomination||'—')}</td>
+          <td>${esc(n.noteDate||'—')}</td>
+          <td>${n.type==='certified'?'Graded':'Raw'}</td>
+          <td>${esc(n.type==='certified'?(n.grade||'—'):(n.condition||'—'))}</td>
+          <td>${esc(n.rarity||'—')}</td>
+          <td class="mono">${fmt$(n.cost)}</td>
+          <td class="mono">${fmt$(n.value)}</td>
+          <td><span class="badge ${statusBadge(n.status||'available')}">${STATUS_LABEL[n.status||'available']}</span></td>
+        </tr>`).join('')}</tbody>
+      </table></div>
+    </div>`).join('');
+}
+
+async function renderTxReport() {
+  const txs = await dbAll('txs');
+  const tf = gv('rpttx-type');
+  const filtered = txs.filter(t=>!tf||t.txtype===tf).sort((a,b)=>b.txid-a.txid);
+  const c = $('rpttx-content');
+  if (!filtered.length) { c.innerHTML='<div class="empty"><div class="ei">📊</div><p>No transactions.</p></div>'; return; }
+  const colors = {buy:'b-green',sell:'b-red',consign:'b-purple',upgrade:'b-blue',donate:'b-teal'};
+  c.innerHTML = `<div class="dt-wrap"><table class="dt">
+    <thead><tr><th>Date</th><th>Type</th><th>Inv #</th><th>Country</th><th>Denomination</th><th>Counterparty</th><th>Amount</th><th>Fees</th><th>Net/Total</th><th>Notes</th></tr></thead>
+    <tbody>${filtered.map(t=>{
+      const amt=t.total||t.amount||t.fee||t.fmv||0;
+      const fees=(t.premium||0)+(t.shipping||0)+(t.commission||0)+(t.otherfees||0);
+      const net=t.net||t.total||t.amount||t.fmv||0;
+      return `<tr>
+        <td>${esc(t.date||'')}</td>
+        <td><span class="badge ${colors[t.txtype]||'b-gray'}">${(t.txtype||'').toUpperCase()}</span></td>
+        <td class="mono">${esc(t.noteId||'')}</td>
+        <td>${esc(t.country||'—')}</td><td>${esc(t.denomination||'—')}</td>
+        <td>${esc(t.counterparty||'—')}</td>
+        <td class="mono">${fmt$(amt)}</td>
+        <td class="mono">${fmt$(fees)}</td>
+        <td class="mono">${fmt$(net)}</td>
+        <td style="font-size:11px;color:var(--muted)">${esc(t.txnotes||t.lot||t.receipt||'')}</td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table></div>
+  <div style="margin-top:10px;font-size:11px;color:var(--muted)">${filtered.length} transactions</div>`;
+}
+
+async function refreshAllReports() {
+  await renderInvReport();
+  await renderColReport();
+  await renderTxReport();
+}
+
+// ════════════════════════════════════════════════════════
+//  PRINT
+// ════════════════════════════════════════════════════════
+async function printReport(type) {
+  const w = window.open('','_blank');
+  if (!w) { alert('Please allow pop-ups for this page to enable printing.'); return; }
+  w.document.write('<html><head><title>Loading…</title></head><body><p style="font-family:Georgia;padding:20px">Preparing report…</p></body></html>');
+  const notes = await dbAll('notes');
+  const txs = await dbAll('txs');
+  const now = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const css = `<style>
+    *{box-sizing:border-box}body{font-family:Georgia,serif;background:#fff;color:#000;margin:20px}
+    h1{font-size:20px;border-bottom:2px solid #000;padding-bottom:6px;margin-bottom:4px}
+    h2{font-size:14px;margin:18px 0 6px;color:#333;border-bottom:1px solid #ccc}
+    p.meta{font-size:11px;color:#666;margin-bottom:14px}
+    table{width:100%;border-collapse:collapse;margin-bottom:10px}
+    th,td{border:1px solid #ccc;padding:5px 7px;font-size:10px;text-align:left}
+    th{background:#f0f0f0;font-weight:700}
+    .badge{display:inline-block;border:1px solid #999;padding:0 5px;border-radius:8px;font-size:9px;font-weight:700}
+    img{max-height:70px;object-fit:contain}
+    .footer{font-size:10px;color:#666;margin-top:14px;border-top:1px solid #ccc;padding-top:6px}
+    @page{margin:15mm}
+  </style>`;
+  let content = '';
+
+  if (type==='inventory') {
+    const total = notes.reduce((a,n)=>a+(parseFloat(n.value)||0),0);
+    const cost = notes.reduce((a,n)=>a+(parseFloat(n.cost)||0),0);
+    content = `<h1>MX Bank Note Registry — Inventory Report</h1>
+      <p class="meta">Generated: ${now} &nbsp;|&nbsp; ${notes.length} notes &nbsp;|&nbsp; Total Value: $${total.toLocaleString()}</p>
+      <table><thead><tr><th>Inv #</th><th>Country</th><th>Region</th><th>Issuer</th><th>Denomination</th><th>Date</th><th>Type</th><th>Grade</th><th>Rarity</th><th>Pick #</th><th>Cost</th><th>Value</th><th>Status</th></tr></thead>
+      <tbody>${notes.map(n=>`<tr>
+        <td><b>${n.id}</b></td><td>${n.country||''}</td><td>${n.region||''}</td>
+        <td>${n.issuer||''}</td><td>${n.denomination||''}</td><td>${n.noteDate||''}</td>
+        <td>${n.type==='certified'?'Graded':'Raw'}</td>
+        <td>${n.type==='certified'?(n.grade||''):(n.condition||'')}</td>
+        <td>${n.rarity||''}</td><td>${n.pick||''}</td>
+        <td>$${parseFloat(n.cost||0).toFixed(2)}</td>
+        <td>$${parseFloat(n.value||0).toFixed(2)}</td>
+        <td>${STATUS_LABEL[n.status||'available']}</td>
+      </tr>`).join('')}</tbody></table>
+      <div class="footer">Total cost: $${cost.toLocaleString()} &nbsp;|&nbsp; Total value: $${total.toLocaleString()} &nbsp;|&nbsp; P&L: $${(total-cost).toLocaleString()}</div>`;
+
+  } else if (type==='collection') {
+    const by = {};
+    notes.forEach(n=>{ const k=n.country||'Unknown'; if(!by[k])by[k]=[]; by[k].push(n); });
+    content = `<h1>MX Bank Note Registry — Collection Report</h1><p class="meta">Generated: ${now}</p>` +
+      Object.entries(by).sort(([a],[b])=>a.localeCompare(b)).map(([c,ns])=>`
+        <h2>${c} — ${ns.length} notes &nbsp;|&nbsp; $${ns.reduce((a,n)=>a+(parseFloat(n.value)||0),0).toFixed(2)}</h2>
+        <table><thead><tr><th>Inv #</th><th>Issuer</th><th>Denom.</th><th>Date</th><th>Type</th><th>Grade</th><th>Rarity</th><th>Cost</th><th>Value</th><th>Status</th></tr></thead>
+        <tbody>${ns.map(n=>`<tr><td><b>${n.id}</b></td><td>${n.issuer||''}</td><td>${n.denomination||''}</td>
+          <td>${n.noteDate||''}</td><td>${n.type==='certified'?'Graded':'Raw'}</td>
+          <td>${n.type==='certified'?(n.grade||''):(n.condition||'')}</td>
+          <td>${n.rarity||''}</td>
+          <td>$${parseFloat(n.cost||0).toFixed(2)}</td>
+          <td>$${parseFloat(n.value||0).toFixed(2)}</td>
+          <td>${STATUS_LABEL[n.status||'available']}</td></tr>`).join('')}</tbody></table>`).join('');
+
+  } else if (type==='transactions') {
+    const total = txs.filter(t=>t.txtype==='buy').reduce((a,t)=>a+(t.total||0),0);
+    const sold = txs.filter(t=>t.txtype==='sell'&&t.saleStatus==='sold').reduce((a,t)=>a+(t.net||0),0);
+    const donated = txs.filter(t=>t.txtype==='donate').reduce((a,t)=>a+(parseFloat(t.fmv)||0),0);
+    content = `<h1>MX Bank Note Registry — Transaction Report</h1>
+      <p class="meta">Generated: ${now} &nbsp;|&nbsp; ${txs.length} transactions</p>
+      <table><thead><tr><th>Date</th><th>Type</th><th>Inv #</th><th>Country</th><th>Denomination</th><th>Counterparty</th><th>Amount</th><th>Fees</th><th>Net/Total</th><th>Notes</th></tr></thead>
+      <tbody>${txs.sort((a,b)=>b.txid-a.txid).map(t=>{
+        const amt=t.total||t.amount||t.fee||t.fmv||0;
+        const fees=(t.premium||0)+(t.shipping||0)+(t.commission||0)+(t.otherfees||0);
+        const net=t.net||t.total||t.amount||t.fmv||0;
+        return `<tr><td>${t.date||''}</td><td><b>${(t.txtype||'').toUpperCase()}</b></td>
+          <td>${t.noteId||''}</td><td>${t.country||''}</td><td>${t.denomination||''}</td>
+          <td>${t.counterparty||''}</td>
+          <td>$${parseFloat(amt).toFixed(2)}</td>
+          <td>$${parseFloat(fees).toFixed(2)}</td>
+          <td>$${parseFloat(net).toFixed(2)}</td>
+          <td>${t.txnotes||t.lot||t.receipt||''}</td></tr>`;
+      }).join('')}</tbody></table>
+      <div class="footer">Total purchases: $${total.toFixed(2)} &nbsp;|&nbsp; Total sales (net): $${sold.toFixed(2)} &nbsp;|&nbsp; Total donations (FMV): $${donated.toFixed(2)}</div>`;
+  }
+
+  w.document.write(`<!DOCTYPE html><html><head><title>MX Bank Note Registry — ${type}</title>${css}</head><body>${content}</body></html>`);
+  w.document.close(); w.focus(); w.print();
+}
+
+async function printNoteDetail(id) {
+  const w = window.open('','_blank');
+  if (!w) { alert('Please allow pop-ups for this page to enable printing.'); return; }
+  w.document.write('<html><head><title>Loading…</title></head><body><p style="font-family:Georgia;padding:20px">Preparing…</p></body></html>');
+  const n = await dbGet('notes', id);
+  if (!n) { w.close(); return; }
+  const css = `<style>body{font-family:Georgia,serif;background:#fff;color:#000;max-width:750px;margin:20px auto}
+    h1{font-size:18px;border-bottom:2px solid #000;padding-bottom:5px}h2{font-size:12px;color:#555;margin-top:0}
+    table{width:100%;border-collapse:collapse;margin:12px 0}td{border:1px solid #ccc;padding:5px 8px;font-size:11px}
+    td.lbl{font-weight:700;background:#f5f5f5;width:32%}
+    .imgs{display:flex;gap:12px;margin:12px 0}.imgs img{max-height:110px;border:1px solid #ccc;border-radius:3px}
+    .badge{display:inline-block;border:1px solid #999;padding:0 5px;border-radius:8px;font-size:9px;font-weight:700}
+    @page{margin:15mm}</style>`;
+  const fields = [
+    ['Inventory #',`<b>${n.id}</b>`],['Country',n.country],['Region / State',n.region],
+    ['Issuer',n.issuer],['Private Bank',n.privbank],['Denomination',n.denomination],
+    ['Currency',n.currency],['Date on Note',n.noteDate],['Series',n.series],
+    ['Serial #',n.serial],['Pick #',n.pick],['Printer',n.printer],['Signatures',n.sigs],
+    ['Note Type',n.type==='certified'?'Certified / Graded':'Raw / Ungraded'],
+    ['Raw Category',n.rawcat],['Condition',n.condition],
+    ['Grading Service',n.service],['Grade (Sheldon)',n.grade],['Cert #',n.certnum],['Label',n.certlabel],
+    ['Rarity',n.rarity],['Size (mm)',n.size],['Color',n.color],
+    ['Watermark',n.watermark],['Security Features',n.security],['Overprint',n.overprint],
+    ['Acquisition Cost',n.cost?'$'+parseFloat(n.cost).toFixed(2):''],
+    ['Market Value',n.value?'$'+parseFloat(n.value).toFixed(2):''],
+    ['Insurance Value',n.insurance?'$'+parseFloat(n.insurance).toFixed(2):''],
+    ['Storage Location',n.location],['Provenance',n.provenance],
+    ['Status',STATUS_LABEL[n.status||'available']],
+    ['Added',n.createdAt?new Date(n.createdAt).toLocaleDateString():'']
+  ].filter(([,v])=>v);
+
+  const imgs = [n.imgObv,n.imgRev,n.imgDet].filter(Boolean);
+  w.document.write(`<!DOCTYPE html><html><head><title>${n.id}</title>${css}</head><body>
+    <h1>${n.country||''} — ${n.denomination||''}</h1>
+    <h2>${n.id} &nbsp;|&nbsp; MX Bank Note Registry &nbsp;|&nbsp; Generated: ${new Date().toLocaleDateString()}</h2>
+    ${imgs.length?`<div class="imgs">${imgs.map(s=>`<img src="${s}">`).join('')}</div>`:''}
+    <table>${fields.map(([l,v])=>`<tr><td class="lbl">${l}</td><td>${v||''}</td></tr>`).join('')}</table>
+    ${n.description?`<p><strong>Description:</strong> ${n.description}</p>`:''}
+  </body></html>`);
+  w.document.close(); w.focus(); w.print();
+}
+
+// ════════════════════════════════════════════════════════
+//  BACKUP & RESTORE
+// ════════════════════════════════════════════════════════
+async function doBackup() {
+  const notes = await dbAll('notes');
+  const txs = await dbAll('txs');
+  const payload = JSON.stringify({ version:4, app:'MX Bank Note Registry', date:new Date().toISOString(), notes, txs, ref, counters }, null, 2);
+  const a = Object.assign(document.createElement('a'), {
+    href: URL.createObjectURL(new Blob([payload],{type:'application/json'})),
+    download: `MXBankNote_Backup_${today()}.json`
+  });
+  a.click(); URL.revokeObjectURL(a.href);
+  toast('Backup saved ✓');
+}
+
+async function doRestore(e) {
+  const file = e.target.files[0]; if (!file) return;
+  if (!confirm('Restore will REPLACE ALL current data. This cannot be undone. Continue?')) { e.target.value=''; return; }
+  try {
+    const data = JSON.parse(await file.text());
+    await new Promise((res,rej)=>{ const tx=db.transaction('notes','readwrite');
+      tx.objectStore('notes').clear();
+      (data.notes||[]).forEach(n=>tx.objectStore('notes').put(n));
+      tx.oncomplete=res; tx.onerror=rej; });
+    await new Promise((res,rej)=>{ const tx=db.transaction('txs','readwrite');
+      tx.objectStore('txs').clear();
+      (data.txs||[]).forEach(t=>tx.objectStore('txs').put(t));
+      tx.oncomplete=res; tx.onerror=rej; });
+    if (data.ref) { ref=data.ref; await saveRef(); }
+    if (data.counters) { counters=data.counters; await saveCounters(); }
+    toast('Restore complete ✓');
+    renderDashboard();
+  } catch(err) {
+    toast('Restore failed: '+err.message);
+  }
+  e.target.value='';
+}
+
+// ════════════════════════════════════════════════════════
+//  MODAL HELPERS
+// ════════════════════════════════════════════════════════
+function openModal(id) { $(id).classList.add('open'); }
+function closeModal(id) { if (id==='modal-note') stopAllCams(); $(id).classList.remove('open'); }
+
+document.querySelectorAll('.moverlay').forEach(m =>
+  m.addEventListener('click', e => { if (e.target===m) { if(m.id==='modal-note') stopAllCams(); m.classList.remove('open'); } })
+);
+
+document.addEventListener('keydown', e => {
+  if (e.key==='Escape') {
+    const open = [...document.querySelectorAll('.moverlay.open')];
+    if (open.length) { const top=open[open.length-1]; if(top.id==='modal-note') stopAllCams(); top.classList.remove('open'); }
+  }
+});
+
+function toggleUpgradeGrade() {}
+
+// ════════════════════════════════════════════════════════
+//  THEME (Dark / Beige / Burgundy)
+// ════════════════════════════════════════════════════════
+const THEMES = [
+  {key:'dark',     cls:'',                label:'🌑 Dark'},
+  {key:'beige',    cls:'theme-beige',     label:'🟤 Beige'},
+  {key:'burgundy', cls:'theme-burgundy',  label:'🍷 Burgundy'},
+];
+let themeIdx = 0;
+function applyTheme(idx) {
+  themeIdx = ((idx % THEMES.length) + THEMES.length) % THEMES.length;
+  document.body.classList.remove('theme-beige','theme-burgundy');
+  const t = THEMES[themeIdx];
+  if (t.cls) document.body.classList.add(t.cls);
+  const btn = $('theme-btn'); if (btn) btn.textContent = t.label;
+}
+function cycleTheme() {
+  applyTheme(themeIdx + 1);
+  try { localStorage.setItem('mxbn-theme', String(themeIdx)); } catch(e){}
+}
+function loadTheme() {
+  let idx = 0;
+  try { const s = localStorage.getItem('mxbn-theme'); if (s!==null) idx = parseInt(s,10)||0; } catch(e){}
+  applyTheme(idx);
+}
+
+// ════════════════════════════════════════════════════════
+//  BOOT
+// ════════════════════════════════════════════════════════
+(async () => {
+  try {
+    loadTheme();
+    await initDB();
+    await loadCounters();
+    await loadRef();
+    await buildSelects();
+    await renderDashboard();
+    renderAuctions();
+  } catch(err) {
+    console.error('Boot error:', err);
+    toast('Startup error: ' + err.message, 6000);
+  }
+})();
+</script>
+</body>
+</html>
