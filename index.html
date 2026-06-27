@@ -2,15 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>MX Bank Note Registry</title>
 
 <!-- ── HOME SCREEN ICON (iPhone/iPad) ── -->
 <link rel="apple-touch-icon" href="icon.png">
-<!-- Browser tab favicon -->
 <link rel="icon" type="image/png" href="logo.png">
 
-<!-- ── FULL-SCREEN PWA BEHAVIOR (opens without Safari address bar) ── -->
+<!-- ── FULL-SCREEN PWA BEHAVIOR ── -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -47,7 +46,7 @@ html,body{height:100%;overflow-x:hidden}
 body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px}
 
 /* ── HEADER ── */
-#hdr{background:linear-gradient(135deg,#1a1508 0%,#000000 70%);border-bottom:1px solid var(--gold);padding:0 20px;display:flex;align-items:center;gap:14px;height:72px;position:sticky;top:0;z-index:200;box-shadow:0 2px 24px rgba(201,168,76,.18)}
+#hdr{background:linear-gradient(135deg,#1a1508 0%,#000000 70%);border-bottom:1px solid var(--gold);padding:0 20px;padding-top:env(safe-area-inset-top,0px);display:flex;align-items:center;gap:14px;height:calc(72px + env(safe-area-inset-top,0px));position:sticky;top:0;z-index:200;box-shadow:0 2px 24px rgba(201,168,76,.18)}
 body.theme-beige #hdr{background:linear-gradient(135deg,#e3d4b2 0%,#efe6d4 70%)}
 body.theme-burgundy #hdr{background:linear-gradient(135deg,#451a26 0%,#2a0d14 70%)}
 #hdr-logo{height:58px;width:auto;flex-shrink:0;filter:drop-shadow(0 2px 6px rgba(201,168,76,.3))}
@@ -126,6 +125,34 @@ body.theme-burgundy #hdr{background:linear-gradient(135deg,#451a26 0%,#2a0d14 70
 .s2{grid-column:span 2}.s3{grid-column:span 3}.s4{grid-column:span 4}
 @media(max-width:900px){.s4{grid-column:span 2}.s3{grid-column:span 2}}
 @media(max-width:550px){.s4,.s3,.s2{grid-column:span 1}}
+/* ── MOBILE HEADER (iPhone): let Dark/Backup/Restore wrap into reach ── */
+@media(max-width:700px){
+  #hdr{
+    flex-wrap:wrap;
+    height:auto;
+    min-height:calc(64px + env(safe-area-inset-top,0px));
+    padding:8px 14px;
+    padding-top:calc(8px + env(safe-area-inset-top,0px));
+    padding-bottom:8px;
+    row-gap:8px;
+  }
+  #hdr-logo{height:42px}
+  #hdr h1{font-size:14px}
+  .hdr-sep{flex-basis:100%;height:0}      /* force the buttons onto a new line */
+  .hdr-stats{display:none}
+  #hdr .btn-row{
+    width:100%;
+    display:flex;
+    gap:8px;
+    justify-content:stretch;
+  }
+  #hdr .btn-row .btn{
+    flex:1;
+    padding:9px 6px;
+    font-size:11px;
+    white-space:nowrap;
+  }
+}
 label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 input,select,textarea{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:12px;padding:7px 10px;outline:none;transition:border-color .15s;width:100%}
 input:focus,select:focus,textarea:focus{border-color:var(--gold)}
