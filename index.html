@@ -295,6 +295,54 @@ hr.sep{border:none;border-top:1px solid var(--border);margin:14px 0}
 .toast{align-items:center;animation:tin .25s ease;background:var(--surface2);border:1px solid var(--gold);border-radius:var(--radius);bottom:22px;box-shadow:var(--shadow);color:var(--gold2);display:flex;font-size:12px;gap:8px;padding:10px 18px;position:fixed;right:22px;z-index:9999}
 @keyframes tin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
+/* ── ZOOMABLE IMAGES ── */
+img.zoomable{cursor:zoom-in}
+.iprev-item .img-actions{position:absolute;left:3px;top:3px;display:flex;gap:4px}
+.iprev-item .img-actions button{align-items:center;background:rgba(0,0,0,.72);border:none;border-radius:4px;color:#fff;cursor:pointer;display:flex;font-size:11px;height:20px;justify-content:center;padding:0 6px}
+.iprev-item .img-actions button:hover{background:var(--gold);color:#000}
+
+/* ── ZOOM LIGHTBOX ── */
+#modal-zoom{background:rgba(0,0,0,.92);z-index:700}
+.zoom-stage{position:relative;width:100%;height:100%;overflow:hidden;display:flex;align-items:center;justify-content:center;touch-action:none}
+#zoom-img{max-width:none;user-select:none;-webkit-user-drag:none;transform-origin:0 0;will-change:transform;image-rendering:auto}
+.zoom-bar{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);display:flex;gap:8px;align-items:center;background:var(--surface2);border:1px solid var(--gold);border-radius:24px;padding:8px 14px;z-index:710;box-shadow:var(--shadow)}
+.zoom-bar button{background:none;border:1px solid var(--border2);border-radius:6px;color:var(--text);cursor:pointer;font-size:15px;line-height:1;padding:6px 11px}
+.zoom-bar button:hover{border-color:var(--gold);color:var(--gold2)}
+.zoom-bar .zb-lvl{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--gold2);min-width:48px;text-align:center}
+.zoom-top{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:0;right:0;display:flex;align-items:center;gap:12px;padding:0 18px;z-index:710}
+.zoom-top .zt-title{flex:1;color:var(--gold2);font-family:'Playfair Display',serif;font-size:15px}
+.zoom-top .zt-close{background:rgba(0,0,0,.5);border:1px solid var(--border2);border-radius:6px;color:#fff;cursor:pointer;font-size:17px;line-height:1;padding:4px 11px}
+.zoom-hint{position:fixed;top:calc(54px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);color:var(--muted);font-size:11px;z-index:710;pointer-events:none}
+
+/* ── IMAGE EDITOR ── */
+.ie-stage{position:relative;background:#0b0b0b;border:1px solid var(--border);border-radius:6px;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:300px;max-height:62vh}
+.ie-stage canvas{max-width:100%;max-height:62vh;display:block;touch-action:none}
+.ie-crop{position:absolute;border:1px dashed var(--gold2);background:rgba(201,168,76,.10);box-shadow:0 0 0 9999px rgba(0,0,0,.45);display:none;pointer-events:none;z-index:2}
+.ie-stage.cropping{cursor:crosshair}
+.ie-tools{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.ie-sliders{display:grid;grid-template-columns:repeat(2,1fr);gap:10px 18px;margin-bottom:6px}
+@media(max-width:600px){.ie-sliders{grid-template-columns:1fr}}
+.ie-sl{display:flex;flex-direction:column;gap:3px}
+.ie-sl .ie-sl-top{display:flex;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.ie-sl .ie-sl-top span:last-child{color:var(--gold2);font-family:'IBM Plex Mono',monospace}
+.ie-sl input[type=range]{width:100%;accent-color:var(--gold)}
+.ie-grid{position:absolute;display:none;pointer-events:none;z-index:3;
+  background-image:
+    linear-gradient(rgba(255,255,255,.45) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.45) 1px, transparent 1px);
+  background-size:33.333% 33.333%, 33.333% 33.333%;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.35)}
+
+/* ── ZOOM NAV ARROWS ── */
+.zoom-arrow{position:fixed;top:50%;transform:translateY(-50%);z-index:710;background:rgba(0,0,0,.5);border:1px solid var(--border2);color:#fff;cursor:pointer;font-size:26px;line-height:1;padding:10px 14px;border-radius:8px;display:none}
+.zoom-arrow:hover{border-color:var(--gold);color:var(--gold2)}
+.zoom-prev{left:14px}.zoom-next{right:14px}
+.zoom-bar .zb-count{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text2);padding:0 4px}
+
+/* ── LIST THUMBNAILS ── */
+.lt-thumb{width:48px;height:32px;object-fit:cover;border:1px solid var(--border);border-radius:3px;display:block;cursor:zoom-in;background:var(--surface3)}
+.lt-thumb-ph{align-items:center;color:var(--muted);display:flex;font-size:14px;justify-content:center}
+
 /* ── PRINT ── */
 @media print{
   #hdr,#nav,.no-print{display:none!important}
@@ -393,7 +441,7 @@ hr.sep{border:none;border-top:1px solid var(--border);margin:14px 0}
       </div>
       <div id="inv-table-wrap" class="dt-wrap">
         <table class="dt">
-          <thead><tr><th>Inv #</th><th>Country</th><th>Region</th><th>Denomination</th><th>Issuer</th><th>Date</th><th>Type</th><th>Grade/Cond.</th><th>Rarity</th><th>Cost</th><th>Value</th><th>Status</th><th class="no-print">Actions</th></tr></thead>
+          <thead><tr><th>Img</th><th>Inv #</th><th>Country</th><th>Region</th><th>Denomination</th><th>Issuer</th><th>Date</th><th>Type</th><th>Grade/Cond.</th><th>Rarity</th><th>Cost</th><th>Value</th><th>Status</th><th class="no-print">Actions</th></tr></thead>
           <tbody id="inv-tbody"></tbody>
         </table>
       </div>
@@ -630,6 +678,7 @@ hr.sep{border:none;border-top:1px solid var(--border);margin:14px 0}
             <button id="rptg-btn" onclick="setRptView('gallery')">⊞ Gallery</button>
           </div>
           <button class="btn btn-gold btn-sm" onclick="printReport('inventory')">🖨 Print</button>
+          <button class="btn btn-out btn-sm" onclick="printLabels()" title="Print Avery 5160 album labels for the filtered notes">🏷 Labels</button>
         </div>
         <div id="rptinv-content"></div>
       </div>
@@ -719,19 +768,16 @@ hr.sep{border:none;border-top:1px solid var(--border);margin:14px 0}
           <button class="btn btn-out btn-icon" title="Add country" onclick="addItem('country')">+</button>
         </div>
       </div>
-      <div class="fg"><label>Region / State / Province</label><input id="fn-region" placeholder="e.g. Chihuahua, Bavaria"></div>
       <div class="fg">
+        <label>Region / State / Province</label>
+        <input id="fn-region" list="dl-region" autocomplete="off" placeholder="Select or type — e.g. Chihuahua, Ontario, Jalisco">
+        <datalist id="dl-region"></datalist>
+      </div>
+      <div class="fg s2">
         <label>Issuing Authority / Bank *</label>
         <div class="sar">
           <select id="fn-issuer"><option value="">-- Select --</option></select>
-          <button class="btn btn-out btn-icon" title="Add issuer" onclick="addItem('issuer')">+</button>
-        </div>
-      </div>
-      <div class="fg">
-        <label>Private Bank of Emission</label>
-        <div class="sar">
-          <select id="fn-privbank"><option value="">-- None --</option></select>
-          <button class="btn btn-out btn-icon" title="Add private bank" onclick="addItem('privbank')">+</button>
+          <button class="btn btn-out btn-icon" title="Add issuer / bank" onclick="addItem('issuer')">+</button>
         </div>
       </div>
       <div class="fg"><label>Denomination / Face Value *</label><input id="fn-denom" placeholder="e.g. 100 Pesos"></div>
@@ -844,6 +890,7 @@ hr.sep{border:none;border-top:1px solid var(--border);margin:14px 0}
       <div class="fg"><label>Insurance Value ($)</label><input type="number" id="fn-insurance" placeholder="0.00" min="0" step="0.01"></div>
       <div class="fg"><label>Storage Location</label><input id="fn-location" placeholder="e.g. Safe #3, Binder A-5"></div>
       <div class="fg"><label>Provenance</label><input id="fn-provenance" placeholder="Prior owner, auction house, estate…"></div>
+      <div class="fg"><label>Acquisition Date</label><input type="date" id="fn-acqdate"></div>
     </div>
 
     <hr class="sep">
@@ -985,6 +1032,85 @@ hr.sep{border:none;border-top:1px solid var(--border);margin:14px 0}
 </div>
 </div>
 
+<!-- ════════════════════════════════════════
+     POP-UP / SETTINGS HELP (printing fallback)
+════════════════════════════════════════ -->
+<div class="moverlay" id="modal-popuphelp">
+<div class="modal sm">
+  <div class="mhdr"><h3>Allow Pop-ups for Printing</h3><button class="mclose" onclick="closeModal('modal-popuphelp')">✕</button></div>
+  <div class="mbody" id="ph-body"></div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════
+     ZOOM LIGHTBOX
+════════════════════════════════════════ -->
+<div class="moverlay" id="modal-zoom">
+  <div class="zoom-top no-print">
+    <div class="zt-title" id="zoom-title"></div>
+    <button class="zt-close" onclick="closeModal('modal-zoom')">✕</button>
+  </div>
+  <div class="zoom-hint no-print">Scroll / pinch to zoom · drag to pan · double-click to reset · ‹ › or swipe to change image</div>
+  <button class="zoom-arrow zoom-prev no-print" id="zoom-prev" onclick="zoomNav(-1)" title="Previous image">‹</button>
+  <button class="zoom-arrow zoom-next no-print" id="zoom-next" onclick="zoomNav(1)" title="Next image">›</button>
+  <div class="zoom-stage" id="zoom-stage"><img id="zoom-img" alt="Zoomed image" draggable="false"></div>
+  <div class="zoom-bar no-print">
+    <span class="zb-count" id="zoom-count"></span>
+    <button onclick="zoomStep(-1)" title="Zoom out">－</button>
+    <span class="zb-lvl" id="zoom-lvl">100%</span>
+    <button onclick="zoomStep(1)" title="Zoom in">＋</button>
+    <button onclick="zoomReset()" title="Reset">⟲</button>
+    <button onclick="zoomEditFromViewer()" id="zoom-edit-btn" title="Edit this image" style="display:none">✎ Edit</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     IMAGE EDITOR
+════════════════════════════════════════ -->
+<div class="moverlay" id="modal-imgedit">
+<div class="modal">
+  <div class="mhdr"><h3 id="ie-title">Edit Image</h3><button class="mclose" onclick="closeModal('modal-imgedit')">✕</button></div>
+  <div class="mbody">
+    <div class="ie-stage" id="ie-stage">
+      <canvas id="ie-canvas"></canvas>
+      <div class="ie-grid" id="ie-grid"></div>
+      <div class="ie-crop" id="ie-crop"></div>
+    </div>
+
+    <div class="ie-tools no-print">
+      <button class="btn btn-out btn-sm" onclick="edRotate(-90)">⟲ Rotate L</button>
+      <button class="btn btn-out btn-sm" onclick="edRotate(90)">⟳ Rotate R</button>
+      <button class="btn btn-out btn-sm" onclick="edFlip('h')">⇄ Flip H</button>
+      <button class="btn btn-out btn-sm" onclick="edFlip('v')">⇅ Flip V</button>
+      <button class="btn btn-out btn-sm" id="ie-cropbtn" onclick="edToggleCrop()">▭ Crop</button>
+      <button class="btn btn-out btn-sm" id="ie-gridbtn" onclick="edToggleGrid()">⊞ Grid</button>
+      <button class="btn btn-out btn-sm" onclick="edAutoEnhance()">✨ Auto-Enhance</button>
+    </div>
+
+    <div class="ie-sliders no-print">
+      <div class="ie-sl s2"><div class="ie-sl-top"><span>Straighten / Tilt</span><span id="ie-tilt-v">0°</span></div>
+        <input type="range" id="ie-tilt" min="-45" max="45" step="0.5" value="0" oninput="edSlider()"
+               onpointerdown="edShowGrid(true)" onpointerup="edShowGrid(false)" onpointercancel="edShowGrid(false)"></div>
+      <div class="ie-sl"><div class="ie-sl-top"><span>Brightness</span><span id="ie-bri-v">100%</span></div>
+        <input type="range" id="ie-bri" min="0" max="200" value="100" oninput="edSlider()"></div>
+      <div class="ie-sl"><div class="ie-sl-top"><span>Contrast</span><span id="ie-con-v">100%</span></div>
+        <input type="range" id="ie-con" min="0" max="200" value="100" oninput="edSlider()"></div>
+      <div class="ie-sl"><div class="ie-sl-top"><span>Saturation</span><span id="ie-sat-v">100%</span></div>
+        <input type="range" id="ie-sat" min="0" max="200" value="100" oninput="edSlider()"></div>
+      <div class="ie-sl"><div class="ie-sl-top"><span>Sharpen</span><span id="ie-sharp-v">0%</span></div>
+        <input type="range" id="ie-sharp" min="0" max="100" value="0" oninput="edSlider()"></div>
+    </div>
+
+    <hr class="sep">
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="edApply()">✓ Apply</button>
+      <button class="btn btn-out" onclick="edReset()">Reset</button>
+      <button class="btn btn-out" onclick="closeModal('modal-imgedit')">Cancel</button>
+    </div>
+  </div>
+</div>
+</div>
+
 <script>
 'use strict';
 // ════════════════════════════════════════════════════════
@@ -1083,7 +1209,7 @@ async function nextId(type) {
 // ════════════════════════════════════════════════════════
 //  REFERENCE DATA
 // ════════════════════════════════════════════════════════
-let ref = { countries:[], issuers:{}, privbanks:{}, printers:[] };
+let ref = { countries:[], issuers:{}, privbanks:{}, regions:{}, printers:[] };
 
 const DEF_COUNTRIES = [
   'Afghanistan','Albania','Algeria','Angola','Argentina','Armenia','Australia','Austria',
@@ -1105,23 +1231,162 @@ const DEF_COUNTRIES = [
 
 const DEF_ISSUERS = {
   'Mexico':[
-    'Banco de México','Banco Nacional de México (BANAMEX)',
-    'Banco de Chihuahua','Banco Minero de Chihuahua','Banco Comercial de Chihuahua',
-    'Banco Mejicano (Chihuahua)','Banco de Jalisco','Banco de Sonora',
-    'Banco de Nuevo León','Banco de Durango','Banco de Zacatecas',
-    'Banco de Guerrero','Banco de Hidalgo','Banco de Tamaulipas',
-    'Banco de Veracruz','Banco de Tabasco','Banco de Coahuila',
-    'Banco de Oaxaca','Banco de Puebla','Banco de Morelos',
-    'Banco Internacional e Hipotecario','Banco Yucateco',
-    'El Banco de Londres y México','Banco Peninsular Mexicano',
-    'Banco Nacional de Crédito Rural','Tesorería de la Federación',
-    'Ejército Constitucionalista (Papel Moneda)','Caja de Préstamos'
+    // ── Federal / national issuers ──
+    'Banco de México',
+    'Tesorería de la Federación',
+    'Comisión Monetaria (Gobierno de México)',
+    'Imperio Mexicano (Maximiliano)',
+    'Nacional Financiera (NAFIN)',
+    'Banco Nacional de Crédito Rural (Banrural)',
+    'Caja de Préstamos para Obras de Irrigación',
+    // ── Major national private banks ──
+    'Banco Nacional de México (BANAMEX)',
+    'El Banco de Londres y México',
+    'Banco Central Mexicano',
+    'Banco Internacional e Hipotecario de México',
+    // ── State "Bancos de Emisión" (Porfiriato charters) ──
+    'Banco de Aguascalientes',
+    'Banco de Campeche',
+    'Banco de Chiapas',
+    'Banco de Chihuahua',
+    'Banco Minero de Chihuahua',
+    'Banco Comercial de Chihuahua',
+    'Banco Mejicano (Chihuahua)',
+    'Banco de Coahuila',
+    'Banco de La Laguna (Coahuila)',
+    'Banco de Durango',
+    'Banco de Guanajuato',
+    'Banco de Guerrero',
+    'Banco de Hidalgo',
+    'Banco de Jalisco',
+    'Banco de Michoacán',
+    'Banco del Estado de México',
+    'Banco de Morelos',
+    'Banco de Nuevo León',
+    'Banco Mercantil de Monterrey',
+    'Banco de Oaxaca',
+    'Banco Oriental de México (Puebla)',
+    'Banco de Puebla',
+    'Banco de Querétaro',
+    'Banco de San Luis Potosí',
+    'Banco de Sinaloa',
+    'Banco Occidental de México (Sinaloa)',
+    'Banco de Sonora',
+    'Banco de Tabasco',
+    'Banco de Tamaulipas',
+    'Banco de Veracruz',
+    'Banco Mercantil de Veracruz',
+    'Banco Peninsular Mexicano (Yucatán)',
+    'Banco Yucateco',
+    'Banco Mercantil de Yucatán',
+    'Banco de Zacatecas',
+    // ── Revolutionary / state government issues (1913–1916) ──
+    'Ejército Constitucionalista (Papel Moneda)',
+    'Gobierno Provisional de México',
+    'División del Norte (Ejército del Norte)',
+    'Estado de Chihuahua',
+    'Estado de Durango',
+    'Estado de Sonora',
+    'Estado Libre y Soberano de Oaxaca',
+    'Gobierno del Estado de Sinaloa',
+    // ── Modern commercial banks ──
+    'BBVA México (Bancomer)',
+    'Banorte',
+    'Santander México',
+    'HSBC México',
+    'Scotiabank México',
+    'Citibanamex',
+    'Banco Azteca',
+    'Banco Inbursa'
   ],
   'United States':[
-    'Federal Reserve Bank','U.S. Treasury / Bureau of Engraving &amp; Printing',
-    'National Currency (State Charter Banks)','First National Bank',
-    'Merchants National Bank','Continental Illinois National Bank',
-    'Bank of the United States (First)','Bank of the United States (Second)'
+    // ── Federal issues ──
+    'U.S. Treasury / Bureau of Engraving and Printing',
+    'United States Notes (Legal Tender)',
+    'Silver Certificates',
+    'Gold Certificates',
+    'Treasury (Coin) Notes',
+    'Demand Notes',
+    'Fractional Currency',
+    'Interest Bearing Notes',
+    'Compound Interest Treasury Notes',
+    'Refunding Certificates',
+    'National Currency (National Bank Notes)',
+    'National Gold Bank Notes',
+    'Federal Reserve Notes',
+    'Federal Reserve Bank Notes',
+    // ── The twelve Federal Reserve Banks ──
+    'Federal Reserve Bank of Boston',
+    'Federal Reserve Bank of New York',
+    'Federal Reserve Bank of Philadelphia',
+    'Federal Reserve Bank of Cleveland',
+    'Federal Reserve Bank of Richmond',
+    'Federal Reserve Bank of Atlanta',
+    'Federal Reserve Bank of Chicago',
+    'Federal Reserve Bank of St. Louis',
+    'Federal Reserve Bank of Minneapolis',
+    'Federal Reserve Bank of Kansas City',
+    'Federal Reserve Bank of Dallas',
+    'Federal Reserve Bank of San Francisco',
+    // ── Historic / obsolete issuers ──
+    'Continental Currency (Continental Congress)',
+    'Bank of the United States (First)',
+    'Bank of the United States (Second)',
+    'Confederate States of America',
+    'Republic of Texas',
+    'First National Bank',
+    'Merchants National Bank',
+    'Continental Illinois National Bank',
+    'Chase National Bank',
+    'National City Bank of New York',
+    'Riggs National Bank',
+    'Bank of North America',
+    'Bank of New York',
+    'Wells Fargo &amp; Co.'
+  ],
+  'Canada':[
+    // ── Government issues ──
+    'Bank of Canada',
+    'Dominion of Canada',
+    'Province of Canada',
+    'Government of Newfoundland',
+    // ── Chartered note-issuing banks ──
+    'Bank of Montreal',
+    'The Canadian Bank of Commerce',
+    'Canadian Imperial Bank of Commerce (CIBC)',
+    'Royal Bank of Canada',
+    'The Bank of Nova Scotia',
+    'The Bank of Toronto',
+    'The Dominion Bank',
+    'The Toronto-Dominion Bank',
+    'Banque Canadienne Nationale',
+    'La Banque Nationale',
+    'Banque Provinciale du Canada',
+    'The Molsons Bank',
+    'The Merchants Bank of Canada',
+    'The Union Bank of Canada',
+    'The Standard Bank of Canada',
+    'The Bank of Hamilton',
+    'Imperial Bank of Canada',
+    'The Quebec Bank',
+    'La Banque d\'Hochelaga',
+    'La Banque Jacques-Cartier',
+    'Eastern Townships Bank',
+    'The Sterling Bank of Canada',
+    'The Weyburn Security Bank',
+    'Barclays Bank (Canada)',
+    'The Home Bank of Canada',
+    'Bank of British North America',
+    'Bank of British Columbia',
+    'The Ontario Bank',
+    'The Bank of New Brunswick',
+    'The Maritime Bank of the Dominion of Canada',
+    'People\'s Bank of Halifax',
+    'People\'s Bank of New Brunswick',
+    'Halifax Banking Company',
+    'The Bank of Yarmouth',
+    'The Commercial Bank of Newfoundland',
+    'The Union Bank of Newfoundland'
   ],
   'United Kingdom':[
     'Bank of England','Royal Bank of Scotland','Bank of Scotland',
@@ -1162,27 +1427,128 @@ const DEF_ISSUERS = {
   ]
 };
 
-const DEF_PRIVBANKS = {
+// "Issuing Authority / Bank" and "Private Bank of Emission" were merged into a
+// single field. All banks now live in DEF_ISSUERS above. This seed is left empty,
+// but buildIssuerSelects() still folds in any ref.privbanks[country] entries so
+// private-bank values saved before the merge are never lost.
+const DEF_PRIVBANKS = {};
+
+// First-level administrative divisions, keyed by country (must match country names above).
+const DEF_REGIONS = {
   'Mexico':[
-    'Banco Mejicano (Chihuahua)','Banco Minero de Chihuahua',
-    'Banco Comercial de Chihuahua','Banco de Chihuahua',
-    'Banco de Sonora','Banco de Jalisco','Banco de Durango',
-    'Banco Peninsular Mexicano','Banco Yucateco',
-    'El Banco de Londres y México','Banco de Tamaulipas',
-    'Banco de Guerrero','Banco de Hidalgo','Banco de Zacatecas',
-    'Banco de Morelos','Banco de Nuevo León','Banco de Veracruz',
-    'Banco de Tabasco','Banco de Coahuila','Banco de Oaxaca',
-    'Banco de Puebla','Banco Oriental de México',
-    'Banco Internacional e Hipotecario'
+    'Aguascalientes','Baja California','Baja California Sur','Campeche','Chiapas',
+    'Chihuahua','Ciudad de México (CDMX)','Coahuila','Colima','Durango',
+    'Estado de México','Guanajuato','Guerrero','Hidalgo','Jalisco','Michoacán',
+    'Morelos','Nayarit','Nuevo León','Oaxaca','Puebla','Querétaro','Quintana Roo',
+    'San Luis Potosí','Sinaloa','Sonora','Tabasco','Tamaulipas','Tlaxcala',
+    'Veracruz','Yucatán','Zacatecas'
   ],
   'United States':[
-    'First National Bank of New York','Merchants National Bank',
-    'National City Bank','Bank of North America','Bank of New York',
-    'First National Bank of Chicago','National Shawmut Bank'
+    'Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut',
+    'Delaware','District of Columbia','Florida','Georgia','Hawaii','Idaho','Illinois',
+    'Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts',
+    'Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada',
+    'New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota',
+    'Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina',
+    'South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington',
+    'West Virginia','Wisconsin','Wyoming'
+  ],
+  'Canada':[
+    'Alberta','British Columbia','Manitoba','New Brunswick',
+    'Newfoundland and Labrador','Northwest Territories','Nova Scotia','Nunavut',
+    'Ontario','Prince Edward Island','Quebec','Saskatchewan','Yukon'
+  ],
+  'Argentina':[
+    'Buenos Aires','Ciudad Autónoma de Buenos Aires','Catamarca','Chaco','Chubut',
+    'Córdoba','Corrientes','Entre Ríos','Formosa','Jujuy','La Pampa','La Rioja',
+    'Mendoza','Misiones','Neuquén','Río Negro','Salta','San Juan','San Luis',
+    'Santa Cruz','Santa Fe','Santiago del Estero','Tierra del Fuego','Tucumán'
+  ],
+  'Bolivia':[
+    'Beni','Chuquisaca','Cochabamba','La Paz','Oruro','Pando','Potosí',
+    'Santa Cruz','Tarija'
+  ],
+  'Chile':[
+    'Arica y Parinacota','Tarapacá','Antofagasta','Atacama','Coquimbo','Valparaíso',
+    'Región Metropolitana de Santiago','O\'Higgins','Maule','Ñuble','Biobío',
+    'La Araucanía','Los Ríos','Los Lagos','Aysén','Magallanes'
+  ],
+  'Colombia':[
+    'Amazonas','Antioquia','Arauca','Atlántico','Bogotá D.C.','Bolívar','Boyacá',
+    'Caldas','Caquetá','Casanare','Cauca','Cesar','Chocó','Córdoba','Cundinamarca',
+    'Guainía','Guaviare','Huila','La Guajira','Magdalena','Meta','Nariño',
+    'Norte de Santander','Putumayo','Quindío','Risaralda',
+    'San Andrés y Providencia','Santander','Sucre','Tolima','Valle del Cauca',
+    'Vaupés','Vichada'
+  ],
+  'Costa Rica':[
+    'Alajuela','Cartago','Guanacaste','Heredia','Limón','Puntarenas','San José'
   ],
   'Cuba':[
-    'Banco Español de la Isla de Cuba','El Banco Español de La Habana',
-    'Banco de La Habana'
+    'Pinar del Río','Artemisa','La Habana','Mayabeque','Matanzas','Cienfuegos',
+    'Villa Clara','Sancti Spíritus','Ciego de Ávila','Camagüey','Las Tunas',
+    'Granma','Holguín','Santiago de Cuba','Guantánamo','Isla de la Juventud'
+  ],
+  'Dominican Republic':[
+    'Azua','Bahoruco','Barahona','Dajabón','Distrito Nacional','Duarte','El Seibo',
+    'Elías Piña','Espaillat','Hato Mayor','Hermanas Mirabal','Independencia',
+    'La Altagracia','La Romana','La Vega','María Trinidad Sánchez','Monseñor Nouel',
+    'Monte Cristi','Monte Plata','Pedernales','Peravia','Puerto Plata','Samaná',
+    'San Cristóbal','San José de Ocoa','San Juan','San Pedro de Macorís',
+    'Sánchez Ramírez','Santiago','Santiago Rodríguez','Santo Domingo','Valverde'
+  ],
+  'Ecuador':[
+    'Azuay','Bolívar','Cañar','Carchi','Chimborazo','Cotopaxi','El Oro','Esmeraldas',
+    'Galápagos','Guayas','Imbabura','Loja','Los Ríos','Manabí','Morona Santiago',
+    'Napo','Orellana','Pastaza','Pichincha','Santa Elena',
+    'Santo Domingo de los Tsáchilas','Sucumbíos','Tungurahua','Zamora Chinchipe'
+  ],
+  'El Salvador':[
+    'Ahuachapán','Cabañas','Chalatenango','Cuscatlán','La Libertad','La Paz',
+    'La Unión','Morazán','San Miguel','San Salvador','San Vicente','Santa Ana',
+    'Sonsonate','Usulután'
+  ],
+  'Guatemala':[
+    'Alta Verapaz','Baja Verapaz','Chimaltenango','Chiquimula','El Progreso',
+    'Escuintla','Guatemala','Huehuetenango','Izabal','Jalapa','Jutiapa','Petén',
+    'Quetzaltenango','Quiché','Retalhuleu','Sacatepéquez','San Marcos','Santa Rosa',
+    'Sololá','Suchitepéquez','Totonicapán','Zacapa'
+  ],
+  'Honduras':[
+    'Atlántida','Choluteca','Colón','Comayagua','Copán','Cortés','El Paraíso',
+    'Francisco Morazán','Gracias a Dios','Intibucá','Islas de la Bahía','La Paz',
+    'Lempira','Ocotepeque','Olancho','Santa Bárbara','Valle','Yoro'
+  ],
+  'Nicaragua':[
+    'Boaco','Carazo','Chinandega','Chontales','Estelí','Granada','Jinotega','León',
+    'Madriz','Managua','Masaya','Matagalpa','Nueva Segovia','Río San Juan','Rivas',
+    'Costa Caribe Norte (RACCN)','Costa Caribe Sur (RACCS)'
+  ],
+  'Panama':[
+    'Bocas del Toro','Chiriquí','Coclé','Colón','Darién','Herrera','Los Santos',
+    'Panamá','Panamá Oeste','Veraguas','Emberá-Wounaan','Guna Yala','Ngäbe-Buglé'
+  ],
+  'Paraguay':[
+    'Asunción','Alto Paraguay','Alto Paraná','Amambay','Boquerón','Caaguazú',
+    'Caazapá','Canindeyú','Central','Concepción','Cordillera','Guairá','Itapúa',
+    'Misiones','Ñeembucú','Paraguarí','Presidente Hayes','San Pedro'
+  ],
+  'Peru':[
+    'Amazonas','Áncash','Apurímac','Arequipa','Ayacucho','Cajamarca','Callao','Cusco',
+    'Huancavelica','Huánuco','Ica','Junín','La Libertad','Lambayeque','Lima','Loreto',
+    'Madre de Dios','Moquegua','Pasco','Piura','Puno','San Martín','Tacna','Tumbes',
+    'Ucayali'
+  ],
+  'Uruguay':[
+    'Artigas','Canelones','Cerro Largo','Colonia','Durazno','Flores','Florida',
+    'Lavalleja','Maldonado','Montevideo','Paysandú','Río Negro','Rivera','Rocha',
+    'Salto','San José','Soriano','Tacuarembó','Treinta y Tres'
+  ],
+  'Venezuela':[
+    'Amazonas','Anzoátegui','Apure','Aragua','Barinas','Bolívar','Carabobo','Cojedes',
+    'Delta Amacuro','Distrito Capital','Falcón','Guárico','La Guaira (Vargas)','Lara',
+    'Mérida','Miranda','Monagas','Nueva Esparta','Portuguesa','Sucre','Táchira',
+    'Trujillo','Yaracuy','Zulia','Dependencias Federales'
   ]
 };
 
@@ -1231,8 +1597,33 @@ async function loadRef() {
     ref.printers = [...DEF_PRINTERS];
     for (const [c,v] of Object.entries(DEF_ISSUERS)) ref.issuers[c] = [...v];
     for (const [c,v] of Object.entries(DEF_PRIVBANKS)) ref.privbanks[c] = [...v];
-    await saveRef();
+    for (const [c,v] of Object.entries(DEF_REGIONS)) ref.regions[c] = [...v];
   }
+  // ── Migration: ensure structure + union-merge new defaults into saved data ──
+  // (only adds items that aren't already present; never removes user entries)
+  if (migrateRef()) await saveRef();
+}
+
+// Returns true if anything was added/changed.
+function migrateRef() {
+  let changed = false;
+  const ensureArr = (k) => { if (!Array.isArray(ref[k])) { ref[k] = []; changed = true; } };
+  const ensureObj = (k) => { if (!ref[k] || typeof ref[k] !== 'object' || Array.isArray(ref[k])) { ref[k] = {}; changed = true; } };
+  ensureArr('countries'); ensureArr('printers');
+  ensureObj('issuers'); ensureObj('privbanks'); ensureObj('regions');
+
+  const addList = (arr, items) => { items.forEach(i => { if (!arr.includes(i)) { arr.push(i); changed = true; } }); };
+  const addMap  = (map, defs) => {
+    for (const [c,v] of Object.entries(defs)) {
+      if (!Array.isArray(map[c])) { map[c] = []; changed = true; }
+      addList(map[c], v);
+    }
+  };
+  addList(ref.countries, DEF_COUNTRIES);
+  addList(ref.printers, DEF_PRINTERS);
+  addMap(ref.issuers, DEF_ISSUERS);
+  addMap(ref.regions, DEF_REGIONS);
+  return changed;
 }
 async function saveRef() { await dbPut('meta',{key:'refdata',val:ref}); }
 
@@ -1409,11 +1800,20 @@ async function renderInventory() {
   updateStatCards(notes);
 }
 
+// Small clickable thumbnail cell for list views (opens the scrollable viewer).
+function thumbCell(n) {
+  const src = n.imgObv || n.imgRev || n.imgDet;
+  if (!src) return '<div class="lt-thumb lt-thumb-ph">🏦</div>';
+  return `<img src="${src}" class="lt-thumb zoomable" loading="lazy" title="Click to zoom"
+    onclick="event.stopPropagation();openNoteZoom('${esc(n.id)}','imgObv')" alt="thumbnail">`;
+}
+
 function buildInvTable(notes) {
   $('inv-tbody').innerHTML = notes.map(n => {
     const grade = n.type==='certified' ? (n.grade||'—') : (n.condition||'—');
     const st = n.status||'available';
     return `<tr>
+      <td>${thumbCell(n)}</td>
       <td class="mono"><span class="badge ${typeBadge(n.type)}">${esc(n.id)}</span></td>
       <td>${esc(n.country||'—')}</td>
       <td>${esc(n.region||'—')}</td>
@@ -1440,7 +1840,7 @@ function buildInvTable(notes) {
 function buildInvGallery(notes) {
   $('inv-gallery').innerHTML = notes.map(n => `
     <div class="ncard" onclick="viewNote('${esc(n.id)}')">
-      <div class="ncard-img">${n.imgObv ? `<img src="${n.imgObv}" alt="Obverse" loading="lazy">` : '🏦'}</div>
+      <div class="ncard-img">${n.imgObv ? `<img src="${n.imgObv}" alt="Obverse" loading="lazy" class="zoomable" title="Click to zoom" onclick="event.stopPropagation();openNoteZoom('${esc(n.id)}','imgObv')">` : '🏦'}</div>
       <div class="ncard-body">
         <div class="ncard-id">${esc(n.id)}</div>
         <div class="ncard-title">${esc(n.country||'')} — ${esc(n.denomination||'')}</div>
@@ -1501,7 +1901,7 @@ async function viewNote(id) {
     ['Watermark', n.watermark], ['Security Features', n.security], ['Overprint', n.overprint],
     ['Acquisition Cost', fmt$(n.cost)], ['Market Value', fmt$(n.value)],
     ['Asking Price', fmt$(n.asking)], ['Insurance Value', fmt$(n.insurance)],
-    ['Storage Location', n.location], ['Provenance', n.provenance],
+    ['Storage Location', n.location], ['Provenance', n.provenance], ['Acquisition Date', n.acqDate],
     ['Status', `<span class="badge ${statusBadge(n.status||'available')}">${STATUS_LABEL[n.status||'available']}</span>`],
     ['Added', n.createdAt ? new Date(n.createdAt).toLocaleDateString() : '']
   ].filter(([,v])=>v);
@@ -1511,7 +1911,7 @@ async function viewNote(id) {
       ${['imgObv','imgRev','imgDet'].map((k,i)=>{
         const lbl = ['Obverse (Front)','Reverse (Back)','Detail / Seal'][i];
         return `<div class="ndi"><div class="ndi-lbl">${lbl}</div>${n[k]
-          ? `<img src="${n[k]}" alt="${lbl}" style="display:block;width:100%;height:130px;object-fit:contain;padding:6px">`
+          ? `<img src="${n[k]}" alt="${lbl}" class="zoomable" title="Click to zoom — scroll through images" onclick="openNoteZoom('${esc(n.id)}','${k}')" style="display:block;width:100%;height:130px;object-fit:contain;padding:6px">`
           : '<div class="ndi-ph">No image</div>'}</div>`;
       }).join('')}
     </div>
@@ -1523,6 +1923,7 @@ async function viewNote(id) {
       <button class="btn btn-gold btn-sm" onclick="closeModal('modal-detail');editNote('${esc(n.id)}')">✏ Edit</button>
       <button class="btn btn-success btn-sm" onclick="closeModal('modal-detail');openSellModal('${esc(n.id)}')">💰 Sell</button>
       <button class="btn btn-out btn-sm" onclick="printNoteDetail('${esc(n.id)}')">🖨 Print</button>
+      <button class="btn btn-out btn-sm" onclick="printLabels(['${esc(n.id)}'])" title="Print an Avery 5160 album label">🏷 Label</button>
     </div>`;
   openModal('modal-detail');
 }
@@ -1595,7 +1996,8 @@ async function openNoteModal(mode, id) {
     // Fill all fields
     sv('fn-invnum', n.id||'');
     sv('fn-country', n.country||''); onCountryChange(false);
-    sv('fn-issuer', n.issuer||''); sv('fn-privbank', n.privbank||'');
+    // Fields merged: fall back to a pre-merge private-bank value if issuer is empty.
+    sv('fn-issuer', n.issuer || n.privbank || '');
     sv('fn-region', n.region||''); sv('fn-denom', n.denomination||'');
     sv('fn-currency', n.currency||''); sv('fn-notedate', n.noteDate||'');
     sv('fn-series', n.series||''); sv('fn-serial', n.serial||'');
@@ -1611,7 +2013,7 @@ async function openNoteModal(mode, id) {
     sv('fn-security', n.security||''); sv('fn-overprint', n.overprint||'');
     sv('fn-cost', n.cost||''); sv('fn-value', n.value||'');
     sv('fn-asking', n.asking||''); sv('fn-insurance', n.insurance||'');
-    sv('fn-location', n.location||''); sv('fn-provenance', n.provenance||'');
+    sv('fn-location', n.location||''); sv('fn-provenance', n.provenance||''); sv('fn-acqdate', n.acqDate||'');
     sv('fn-desc', n.description||''); sv('fn-privnotes', n.privnotes||'');
     curImgs = { obv: n.imgObv||null, rev: n.imgRev||null, det: n.imgDet||null };
     ['obv','rev','det'].forEach(k => { if (curImgs[k]) setImgPreview(k, curImgs[k]); });
@@ -1649,7 +2051,8 @@ async function saveNote() {
   const note = {
     id,
     country: gv('fn-country'), region: gv('fn-region'),
-    issuer: gv('fn-issuer'), privbank: gv('fn-privbank'),
+    // privbank field merged into issuer; preserve any legacy value silently.
+    issuer: gv('fn-issuer'), privbank: existing?.privbank || '',
     denomination: gv('fn-denom'), currency: gv('fn-currency'),
     noteDate: gv('fn-notedate'), series: gv('fn-series'),
     serial: gv('fn-serial'), pick: gv('fn-pick'),
@@ -1663,13 +2066,25 @@ async function saveNote() {
     security: gv('fn-security'), overprint: gv('fn-overprint'),
     cost: gv('fn-cost'), value: gv('fn-value'),
     asking: gv('fn-asking'), insurance: gv('fn-insurance'),
-    location: gv('fn-location'), provenance: gv('fn-provenance'),
+    location: gv('fn-location'), provenance: gv('fn-provenance'), acqDate: gv('fn-acqdate'),
     description: gv('fn-desc'), privnotes: gv('fn-privnotes'),
     imgObv: curImgs.obv, imgRev: curImgs.rev, imgDet: curImgs.det,
     status: gv('fn-status') || existing?.status || 'available',
     createdAt: existing?.createdAt || Date.now(),
     updatedAt: Date.now()
   };
+
+  // Remember a freshly typed Region / State / Province for this country so it
+  // shows up in the dropdown next time (the field is an editable combobox).
+  const regVal = (note.region||'').trim();
+  if (regVal && note.country) {
+    if (!ref.regions) ref.regions = {};
+    if (!Array.isArray(ref.regions[note.country])) ref.regions[note.country] = [];
+    if (!ref.regions[note.country].includes(regVal)) {
+      ref.regions[note.country].push(regVal);
+      await saveRef();
+    }
+  }
 
   await dbPut('notes', note);
 
@@ -1750,6 +2165,7 @@ async function buildSelects() {
     ref.printers.sort().map(p=>`<option value="${esc(p)}"${p===curP?' selected':''}>${esc(p)}</option>`).join('');
 
   buildIssuerSelects(curC);
+  buildRegionList(curC);
 
   const rc = $('rptinv-country');
   if (rc) {
@@ -1760,22 +2176,29 @@ async function buildSelects() {
 }
 
 function buildIssuerSelects(country) {
-  const issuers = (ref.issuers[country]||[]).slice().sort();
-  const privbanks = (ref.privbanks[country]||[]).slice().sort();
+  // Single merged "Issuing Authority / Bank" list: official issuers + any
+  // private-bank-of-emission entries saved before the two fields were merged.
+  const merged = [...(ref.issuers[country]||[]), ...((ref.privbanks||{})[country]||[])];
+  const issuers = [...new Set(merged)].sort();
   const curI = gv('fn-issuer');
-  const curB = gv('fn-privbank');
 
   $('fn-issuer').innerHTML = '<option value="">-- Select --</option>' +
     issuers.map(b=>`<option value="${esc(b)}"${b===curI?' selected':''}>${esc(b)}</option>`).join('');
+}
 
-  $('fn-privbank').innerHTML = '<option value="">-- None --</option>' +
-    privbanks.map(b=>`<option value="${esc(b)}"${b===curB?' selected':''}>${esc(b)}</option>`).join('');
+// Populate the editable Region / State / Province combobox for the chosen country.
+function buildRegionList(country) {
+  const dl = $('dl-region');
+  if (!dl) return;
+  const regions = ((ref.regions||{})[country]||[]).slice().sort();
+  dl.innerHTML = regions.map(r=>`<option value="${esc(r)}"></option>`).join('');
 }
 
 function onCountryChange(resetSubs=true) {
   const country = gv('fn-country');
-  if (resetSubs) { sv('fn-issuer',''); sv('fn-privbank',''); }
+  if (resetSubs) { sv('fn-issuer',''); sv('fn-region',''); }
   buildIssuerSelects(country);
+  buildRegionList(country);
 }
 
 // ════════════════════════════════════════════════════════
@@ -1784,11 +2207,11 @@ function onCountryChange(resetSubs=true) {
 let addItemType = '';
 function addItem(type) {
   addItemType = type;
-  const labels = { country:'New Country', issuer:'New Issuing Authority / Bank', privbank:'New Private Bank of Emission', printer:'New Printing Company' };
+  const labels = { country:'New Country', issuer:'New Issuing Authority / Bank', printer:'New Printing Company' };
   $('mai-title').textContent = labels[type] || 'Add Item';
   const country = gv('fn-country');
   let extra = '';
-  if ((type==='issuer'||type==='privbank') && country)
+  if (type==='issuer' && country)
     extra = `<p style="font-size:11px;color:var(--muted);margin-top:6px">Country: <strong style="color:var(--text)">${esc(country)}</strong></p>`;
   $('mai-body').innerHTML = `<div class="fg"><label>Name</label><input id="mai-name" placeholder="Enter name…" autocomplete="off"></div>${extra}`;
   openModal('modal-additem');
@@ -1805,9 +2228,6 @@ async function saveAddItem() {
   } else if (addItemType==='issuer') {
     if (!ref.issuers[country]) ref.issuers[country] = [];
     if (!ref.issuers[country].includes(name)) ref.issuers[country].push(name);
-  } else if (addItemType==='privbank') {
-    if (!ref.privbanks[country]) ref.privbanks[country] = [];
-    if (!ref.privbanks[country].includes(name)) ref.privbanks[country].push(name);
   } else if (addItemType==='printer') {
     if (!ref.printers.includes(name)) ref.printers.push(name);
   }
@@ -1816,7 +2236,6 @@ async function saveAddItem() {
 
   if (addItemType==='country') { sv('fn-country',name); onCountryChange(); }
   else if (addItemType==='issuer') sv('fn-issuer',name);
-  else if (addItemType==='privbank') sv('fn-privbank',name);
   else if (addItemType==='printer') sv('fn-printer',name);
 
   closeModal('modal-additem');
@@ -1849,8 +2268,13 @@ function handleUpload(e, key) {
 }
 
 function setImgPreview(key, src) {
+  const lbl = ({obv:'Obverse (Front)',rev:'Reverse (Back)',det:'Detail / Seal'}[key]) || key;
   $('prev-'+key).innerHTML = `<div class="iprev-item">
-    <img src="${src}" alt="${key}">
+    <img src="${src}" alt="${esc(lbl)}" class="zoomable" title="Click to zoom"
+         onclick="openZoom(this.src, '${esc(lbl)}', '${key}')">
+    <div class="img-actions no-print">
+      <button title="Edit / enhance image" onclick="openImgEditor('${key}')">✎ Edit</button>
+    </div>
     <button class="del-img" onclick="clearImg('${key}')">✕</button>
   </div>`;
 }
@@ -1903,6 +2327,415 @@ function stopCam(key) {
   const vid = $('vid-'+key); if (vid) vid.srcObject = null;
 }
 function stopAllCams(){ ['obv','rev','det'].forEach(stopCam); }
+
+// ════════════════════════════════════════════════════════
+//  ZOOM LIGHTBOX  (scroll / pinch / drag pan)
+// ════════════════════════════════════════════════════════
+let zoom = { scale:1, x:0, y:0, list:[], idx:0, editKey:null };
+const ZMIN = 1, ZMAX = 8;
+
+// Multi-image viewer. `list` = [{src,label}]. editKey (optional) lets the user
+// jump into the editor for a form image (obv/rev/det).
+function openZoomImages(list, idx=0, opts={}) {
+  list = (list||[]).filter(i => i && i.src);
+  if (!list.length) return;
+  zoom = { scale:1, x:0, y:0, list, idx: Math.max(0, Math.min(idx, list.length-1)), editKey: opts.editKey||null };
+  openModal('modal-zoom');
+  zoomShow();
+}
+// Backward-compatible single-image entry point.
+function openZoom(src, title, editKey) { openZoomImages([{src, label:title}], 0, { editKey }); }
+
+// Build a note's image list and open at the requested image key.
+async function openNoteZoom(id, key) {
+  const n = await dbGet('notes', id);
+  if (!n) return;
+  const defs = [['imgObv','Obverse (Front)'],['imgRev','Reverse (Back)'],['imgDet','Detail / Seal']];
+  const present = defs.filter(([k]) => n[k]);
+  const list = present.map(([k,l]) => ({ src:n[k], label:`${n.id} — ${l}` }));
+  let idx = 0;
+  if (key) { const i = present.findIndex(([k]) => k===key); if (i>=0) idx = i; }
+  openZoomImages(list, idx);
+}
+
+function zoomShow() {
+  const it = zoom.list[zoom.idx]; if (!it) return;
+  const img = $('zoom-img');
+  $('zoom-title').textContent = it.label || '';
+  $('zoom-edit-btn').style.display = zoom.editKey ? 'inline-flex' : 'none';
+  const multi = zoom.list.length > 1;
+  $('zoom-prev').style.display = multi ? 'block' : 'none';
+  $('zoom-next').style.display = multi ? 'block' : 'none';
+  $('zoom-count').textContent = multi ? `${zoom.idx+1} / ${zoom.list.length}` : '';
+  img.onload = () => { zoomReset(); };
+  img.src = it.src;
+  requestAnimationFrame(() => { if (img.complete && img.naturalWidth) zoomReset(); else applyZoom(); });
+}
+function zoomNav(d) {
+  if (zoom.list.length < 2) return;
+  zoom.idx = (zoom.idx + d + zoom.list.length) % zoom.list.length;
+  zoomShow();
+}
+function applyZoom() {
+  const img = $('zoom-img');
+  img.style.transform = `translate(${zoom.x}px,${zoom.y}px) scale(${zoom.scale})`;
+  const lvl = $('zoom-lvl'); if (lvl) lvl.textContent = Math.round(zoom.scale*100)+'%';
+}
+function zoomReset() {
+  const stage = $('zoom-stage'), img = $('zoom-img');
+  if (!img.naturalWidth) { zoom.scale=1; zoom.x=0; zoom.y=0; applyZoom(); return; }
+  // Fit image to stage at scale 1 by sizing the element, then center it.
+  const sw = stage.clientWidth, sh = stage.clientHeight;
+  const fit = Math.min(sw/img.naturalWidth, sh/img.naturalHeight) || 1;
+  img.style.width = (img.naturalWidth*fit)+'px';
+  img.style.height = (img.naturalHeight*fit)+'px';
+  zoom.scale = 1;
+  zoom.x = (sw - img.naturalWidth*fit)/2;
+  zoom.y = (sh - img.naturalHeight*fit)/2;
+  applyZoom();
+}
+function zoomAt(factor, cx, cy) {
+  const stage = $('zoom-stage');
+  const r = stage.getBoundingClientRect();
+  const px = (cx!=null?cx:r.left+r.width/2) - r.left;
+  const py = (cy!=null?cy:r.top+r.height/2) - r.top;
+  const ns = Math.min(ZMAX, Math.max(ZMIN, zoom.scale*factor));
+  const k = ns/zoom.scale;
+  // keep the point under the cursor fixed
+  zoom.x = px - (px - zoom.x)*k;
+  zoom.y = py - (py - zoom.y)*k;
+  zoom.scale = ns;
+  applyZoom();
+}
+function zoomStep(dir){ zoomAt(dir>0?1.3:1/1.3); }
+function zoomEditFromViewer(){
+  const k = zoom.editKey; if (!k) return;
+  closeModal('modal-zoom');
+  openImgEditor(k);
+}
+(function initZoomGestures(){
+  const ready = () => {
+    const stage = $('zoom-stage'); if (!stage) return;
+    let dragging=false, lastX=0, lastY=0, startX=0, startY=0, moved=0;
+    const pts = new Map(); let pinchDist=0;
+    stage.addEventListener('wheel', e => {
+      e.preventDefault();
+      zoomAt(e.deltaY<0?1.12:1/1.12, e.clientX, e.clientY);
+    }, {passive:false});
+    stage.addEventListener('dblclick', e => { e.preventDefault(); zoomReset(); });
+    stage.addEventListener('pointerdown', e => {
+      stage.setPointerCapture(e.pointerId);
+      pts.set(e.pointerId, {x:e.clientX, y:e.clientY});
+      if (pts.size===1){ dragging=true; lastX=e.clientX; lastY=e.clientY; startX=e.clientX; startY=e.clientY; moved=0; }
+      else if (pts.size===2){ dragging=false; pinchDist=twoDist(); }
+    });
+    stage.addEventListener('pointermove', e => {
+      if (!pts.has(e.pointerId)) return;
+      pts.set(e.pointerId, {x:e.clientX, y:e.clientY});
+      if (pts.size===2){
+        const d = twoDist();
+        if (pinchDist>0){ const c=twoCenter(); zoomAt(d/pinchDist, c.x, c.y); }
+        pinchDist = d;
+      } else if (dragging){
+        const dx=e.clientX-lastX, dy=e.clientY-lastY;
+        moved += Math.hypot(dx,dy);
+        // When not zoomed in, a horizontal drag pages between images instead of panning.
+        if (zoom.scale > 1.02){ zoom.x += dx; zoom.y += dy; applyZoom(); }
+        lastX=e.clientX; lastY=e.clientY;
+      }
+    });
+    const up = e => {
+      const wasSingle = pts.size===1;
+      pts.delete(e.pointerId);
+      if (pts.size<2) pinchDist=0;
+      if (pts.size===0){
+        // Swipe to change image (only when fit-to-screen, i.e. not zoomed in).
+        if (wasSingle && zoom.scale<=1.02 && zoom.list.length>1){
+          const dx=e.clientX-startX, dy=e.clientY-startY;
+          if (Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)*1.5) zoomNav(dx<0?1:-1);
+        }
+        dragging=false;
+      }
+    };
+    stage.addEventListener('pointerup', up);
+    stage.addEventListener('pointercancel', up);
+    function twoDist(){ const a=[...pts.values()]; return Math.hypot(a[0].x-a[1].x, a[0].y-a[1].y); }
+    function twoCenter(){ const a=[...pts.values()]; return {x:(a[0].x+a[1].x)/2, y:(a[0].y+a[1].y)/2}; }
+    // Keyboard: arrows page images, +/- zoom, when the viewer is open.
+    document.addEventListener('keydown', e => {
+      if (!$('modal-zoom').classList.contains('open')) return;
+      if (e.key==='ArrowRight'){ zoomNav(1); }
+      else if (e.key==='ArrowLeft'){ zoomNav(-1); }
+      else if (e.key==='+'||e.key==='='){ zoomStep(1); }
+      else if (e.key==='-'||e.key==='_'){ zoomStep(-1); }
+    });
+  };
+  if (document.readyState!=='loading') ready(); else document.addEventListener('DOMContentLoaded', ready);
+})();
+
+// ════════════════════════════════════════════════════════
+//  IMAGE EDITOR  (rotate / flip / crop / brightness / contrast /
+//  saturation / sharpen / auto-enhance)
+// ════════════════════════════════════════════════════════
+let ed = null;           // editor state
+const ED_MAX = 1800;     // cap working dimension for performance / file size
+
+function openImgEditor(key) {
+  const src = curImgs[key];
+  if (!src) { toast('No image to edit yet'); return; }
+  const img = new Image();
+  img.onload = () => {
+    let w = img.naturalWidth, h = img.naturalHeight;
+    const scale = Math.min(1, ED_MAX/Math.max(w,h));
+    const base = document.createElement('canvas');
+    base.width = Math.max(1, Math.round(w*scale));
+    base.height = Math.max(1, Math.round(h*scale));
+    base.getContext('2d').drawImage(img, 0, 0, base.width, base.height);
+    ed = { key, base, rot:0, flipH:false, flipV:false, tilt:0,
+           bri:100, con:100, sat:100, sharp:0, cropping:false, crop:null, grid:false };
+    $('ie-title').textContent = 'Edit Image — ' + ({obv:'Obverse',rev:'Reverse',det:'Detail'}[key]||key);
+    edSyncSliders();
+    edSetCropBtn();
+    edSetGridBtn();
+    openModal('modal-imgedit');
+    requestAnimationFrame(edRender);
+  };
+  img.onerror = () => toast('Could not load image for editing');
+  img.src = src;
+}
+
+function edSyncSliders() {
+  sv('ie-bri', ed.bri); sv('ie-con', ed.con); sv('ie-sat', ed.sat); sv('ie-sharp', ed.sharp); sv('ie-tilt', ed.tilt);
+  $('ie-bri-v').textContent = ed.bri+'%';
+  $('ie-con-v').textContent = ed.con+'%';
+  $('ie-sat-v').textContent = ed.sat+'%';
+  $('ie-sharp-v').textContent = ed.sharp+'%';
+  $('ie-tilt-v').textContent = (ed.tilt>0?'+':'')+ed.tilt+'°';
+}
+function edSlider() {
+  if (!ed) return;
+  ed.bri = +gv('ie-bri'); ed.con = +gv('ie-con'); ed.sat = +gv('ie-sat');
+  ed.sharp = +gv('ie-sharp'); ed.tilt = +gv('ie-tilt');
+  edSyncSliders();
+  edRender();
+}
+
+// Alignment grid (rule-of-thirds) — helps line a note up while straightening.
+function edToggleGrid(){ if(!ed) return; ed.grid=!ed.grid; edSetGridBtn(); edRender(); }
+function edShowGrid(on){ if(!ed) return; ed.gridTemp=!!on; edRender(); }   // temporary grid while dragging tilt
+function edSetGridBtn(){ const b=$('ie-gridbtn'); if(b) b.classList.toggle('btn-gold', !!(ed&&ed.grid)); }
+function edRotate(deg){ if(!ed) return; ed.rot=((ed.rot+deg)%360+360)%360; ed.crop=null; edRender(); }
+function edFlip(axis){ if(!ed) return; if(axis==='h') ed.flipH=!ed.flipH; else ed.flipV=!ed.flipV; ed.crop=null; edRender(); }
+
+// Build the oriented (rotate+flip) canvas from the base.
+function edOriented() {
+  const {base,rot,flipH,flipV} = ed;
+  const swap = (rot===90||rot===270);
+  const c = document.createElement('canvas');
+  c.width = swap ? base.height : base.width;
+  c.height = swap ? base.width : base.height;
+  const ctx = c.getContext('2d');
+  ctx.save();
+  ctx.translate(c.width/2, c.height/2);
+  ctx.rotate(rot*Math.PI/180);
+  ctx.scale(flipH?-1:1, flipV?-1:1);
+  ctx.drawImage(base, -base.width/2, -base.height/2);
+  ctx.restore();
+  return c;
+}
+
+// Apply fine straighten/tilt rotation, scaling up to cover so corners stay filled.
+function edTilted(src) {
+  if (!ed.tilt) return src;
+  const W = src.width, H = src.height;
+  const t = ed.tilt*Math.PI/180, c = Math.abs(Math.cos(t)), s = Math.abs(Math.sin(t));
+  const scale = Math.max((W*c + H*s)/W, (W*s + H*c)/H); // cover factor (≥1)
+  const out = document.createElement('canvas');
+  out.width = W; out.height = H;
+  const ctx = out.getContext('2d');
+  ctx.save();
+  ctx.translate(W/2, H/2);
+  ctx.rotate(t);
+  ctx.scale(scale, scale);
+  ctx.drawImage(src, -W/2, -H/2);
+  ctx.restore();
+  return out;
+}
+
+// Full composite: oriented + tilt + filters + sharpen. Returns a canvas.
+function edComposite() {
+  const work = edTilted(edOriented());
+  const out = document.createElement('canvas');
+  out.width = work.width; out.height = work.height;
+  const ctx = out.getContext('2d');
+  ctx.filter = `brightness(${ed.bri}%) contrast(${ed.con}%) saturate(${ed.sat}%)`;
+  ctx.drawImage(work, 0, 0);
+  ctx.filter = 'none';
+  if (ed.sharp > 0) sharpenCanvas(ctx, out.width, out.height, ed.sharp/100);
+  return out;
+}
+
+function edRender() {
+  if (!ed) return;
+  const comp = edComposite();
+  const cv = $('ie-canvas');
+  cv.width = comp.width; cv.height = comp.height;
+  cv.getContext('2d').drawImage(comp, 0, 0);
+  edPositionOverlays();
+}
+
+// ── Sharpen via 3×3 convolution, blended by amount (0..1) ──
+function sharpenCanvas(ctx, w, h, amount) {
+  const src = ctx.getImageData(0,0,w,h);
+  const dst = ctx.createImageData(w,h);
+  const s = src.data, d = dst.data;
+  const c = 1 + 4*amount, e = -amount; // center + edges
+  const idx = (x,y)=>(y*w+x)*4;
+  for (let y=0;y<h;y++){
+    for (let x=0;x<w;x++){
+      const o = idx(x,y);
+      for (let ch=0; ch<3; ch++){
+        const xm=Math.max(0,x-1), xp=Math.min(w-1,x+1), ym=Math.max(0,y-1), yp=Math.min(h-1,y+1);
+        let v = c*s[o+ch] + e*s[idx(xm,y)+ch] + e*s[idx(xp,y)+ch] + e*s[idx(x,ym)+ch] + e*s[idx(x,yp)+ch];
+        d[o+ch] = v<0?0:v>255?255:v;
+      }
+      d[o+3] = s[o+3];
+    }
+  }
+  ctx.putImageData(dst,0,0);
+}
+
+// ── Auto-enhance: per-channel contrast stretch (auto levels) ──
+function edAutoEnhance() {
+  if (!ed) return;
+  const comp = edComposite();
+  const ctx = comp.getContext('2d');
+  const im = ctx.getImageData(0,0,comp.width,comp.height);
+  const data = im.data, n = comp.width*comp.height;
+  for (let ch=0; ch<3; ch++){
+    const hist = new Uint32Array(256);
+    for (let i=0;i<n;i++) hist[data[i*4+ch]]++;
+    const clip = Math.max(1, Math.floor(n*0.005)); // ignore 0.5% tails
+    let lo=0, hi=255, acc=0;
+    for (let v=0;v<256;v++){ acc+=hist[v]; if (acc>clip){ lo=v; break; } }
+    acc=0; for (let v=255;v>=0;v--){ acc+=hist[v]; if (acc>clip){ hi=v; break; } }
+    if (hi<=lo) continue;
+    const range = hi-lo;
+    for (let i=0;i<n;i++){
+      let v = (data[i*4+ch]-lo)*255/range;
+      data[i*4+ch] = v<0?0:v>255?255:v;
+    }
+  }
+  ctx.putImageData(im,0,0);
+  // Bake the enhanced result as the new base and reset adjustments.
+  ed.base = comp; ed.rot=0; ed.flipH=false; ed.flipV=false; ed.tilt=0;
+  ed.bri=100; ed.con=100; ed.sat=100; ed.sharp=0; ed.crop=null;
+  edSyncSliders(); edRender();
+  toast('Auto-enhanced ✓');
+}
+
+// ── Crop ──
+function edSetCropBtn(){ const b=$('ie-cropbtn'); if(b) b.classList.toggle('btn-gold', !!(ed&&ed.cropping)); }
+function edToggleCrop() {
+  if (!ed) return;
+  ed.cropping = !ed.cropping;
+  $('ie-stage').classList.toggle('cropping', ed.cropping);
+  edSetCropBtn();
+  if (!ed.cropping) { ed.crop=null; $('ie-crop').style.display='none'; }
+  else toast('Drag on the image to select a crop area');
+}
+function edPositionOverlays() {
+  if (!ed) return;
+  const cv = $('ie-canvas'), stage = $('ie-stage');
+  const r = cv.getBoundingClientRect(), sr = stage.getBoundingClientRect();
+  const sx = r.width/cv.width, sy = r.height/cv.height;
+  const left = r.left-sr.left, top = r.top-sr.top;
+
+  // Alignment grid sits exactly over the rendered image.
+  const grid = $('ie-grid');
+  if (grid) {
+    if (ed.grid || ed.gridTemp) {
+      grid.style.display='block';
+      grid.style.left=left+'px'; grid.style.top=top+'px';
+      grid.style.width=r.width+'px'; grid.style.height=r.height+'px';
+    } else grid.style.display='none';
+  }
+
+  // Crop selection box.
+  const box = $('ie-crop');
+  if (!ed.crop) { box.style.display='none'; return; }
+  box.style.display='block';
+  box.style.left = (left + ed.crop.x*sx)+'px';
+  box.style.top  = (top  + ed.crop.y*sy)+'px';
+  box.style.width  = (ed.crop.w*sx)+'px';
+  box.style.height = (ed.crop.h*sy)+'px';
+}
+// back-compat alias used by crop drag handlers
+function edPositionCrop(){ edPositionOverlays(); }
+(function initCropDrag(){
+  const ready = () => {
+    const stage = $('ie-stage'); if (!stage) return;
+    let active=false, startX=0, startY=0;
+    const toCanvas = (clientX, clientY) => {
+      const cv=$('ie-canvas'), r=cv.getBoundingClientRect();
+      return { x:(clientX-r.left)*cv.width/r.width, y:(clientY-r.top)*cv.height/r.height };
+    };
+    stage.addEventListener('pointerdown', e => {
+      if (!ed || !ed.cropping) return;
+      active=true; stage.setPointerCapture(e.pointerId);
+      const p=toCanvas(e.clientX,e.clientY); startX=p.x; startY=p.y;
+      ed.crop={x:startX,y:startY,w:0,h:0}; edPositionCrop();
+    });
+    stage.addEventListener('pointermove', e => {
+      if (!active||!ed||!ed.cropping) return;
+      const p=toCanvas(e.clientX,e.clientY);
+      const cv=$('ie-canvas');
+      const x=Math.max(0,Math.min(startX,p.x)), y=Math.max(0,Math.min(startY,p.y));
+      const x2=Math.min(cv.width,Math.max(startX,p.x)), y2=Math.min(cv.height,Math.max(startY,p.y));
+      ed.crop={x, y, w:x2-x, h:y2-y}; edPositionCrop();
+    });
+    const end = () => {
+      if (!active) return; active=false;
+      if (ed && ed.crop && (ed.crop.w<8||ed.crop.h<8)) { ed.crop=null; $('ie-crop').style.display='none'; }
+      if (ed && ed.crop) edApplyCrop();
+    };
+    stage.addEventListener('pointerup', end);
+    stage.addEventListener('pointercancel', end);
+  };
+  if (document.readyState!=='loading') ready(); else document.addEventListener('DOMContentLoaded', ready);
+})();
+function edApplyCrop() {
+  if (!ed || !ed.crop) return;
+  const comp = edComposite();
+  const {x,y,w,h} = ed.crop;
+  const cut = document.createElement('canvas');
+  cut.width=Math.round(w); cut.height=Math.round(h);
+  cut.getContext('2d').drawImage(comp, x, y, w, h, 0, 0, w, h);
+  ed.base=cut; ed.rot=0; ed.flipH=false; ed.flipV=false; ed.tilt=0;
+  ed.bri=100; ed.con=100; ed.sat=100; ed.sharp=0;
+  ed.crop=null; ed.cropping=false;
+  $('ie-stage').classList.remove('cropping'); $('ie-crop').style.display='none';
+  edSetCropBtn(); edSyncSliders(); edRender();
+  toast('Cropped ✓');
+}
+
+function edReset() {
+  if (!ed) return;
+  ed.rot=0; ed.flipH=false; ed.flipV=false; ed.tilt=0; ed.bri=100; ed.con=100; ed.sat=100; ed.sharp=0;
+  ed.crop=null; ed.cropping=false;
+  $('ie-stage').classList.remove('cropping'); $('ie-crop').style.display='none';
+  edSetCropBtn(); edSyncSliders(); edRender();
+}
+
+function edApply() {
+  if (!ed) return;
+  const comp = edComposite();
+  const data = comp.toDataURL('image/jpeg', 0.92);
+  curImgs[ed.key] = data;
+  setImgPreview(ed.key, data);
+  closeModal('modal-imgedit');
+  toast('Image updated ✓');
+}
 
 // ════════════════════════════════════════════════════════
 //  SELL MODAL
@@ -2296,7 +3129,7 @@ async function renderInvReport() {
   if (rptViewMode==='gallery') {
     c.innerHTML = `<div class="ngrid">${filtered.map(n=>`
       <div class="ncard" onclick="viewNote('${esc(n.id)}')">
-        <div class="ncard-img">${n.imgObv?`<img src="${n.imgObv}" alt="Obverse" loading="lazy">`:'🏦'}</div>
+        <div class="ncard-img">${n.imgObv?`<img src="${n.imgObv}" alt="Obverse" loading="lazy" class="zoomable" title="Click to zoom" onclick="event.stopPropagation();openNoteZoom('${esc(n.id)}','imgObv')">`:'🏦'}</div>
         <div class="ncard-body">
           <div class="ncard-id">${esc(n.id)}</div>
           <div class="ncard-title">${esc(n.country||'')} — ${esc(n.denomination||'')}</div>
@@ -2309,8 +3142,9 @@ async function renderInvReport() {
       </div>`).join('')}</div>`;
   } else {
     c.innerHTML = `<div class="dt-wrap"><table class="dt">
-      <thead><tr><th>Inv #</th><th>Country</th><th>Region</th><th>Issuer</th><th>Denomination</th><th>Date</th><th>Type</th><th>Grade/Cond.</th><th>Rarity</th><th>Pick #</th><th>Cost</th><th>Value</th><th>Status</th></tr></thead>
+      <thead><tr><th>Img</th><th>Inv #</th><th>Country</th><th>Region</th><th>Issuer</th><th>Denomination</th><th>Date</th><th>Type</th><th>Grade/Cond.</th><th>Rarity</th><th>Pick #</th><th>Cost</th><th>Value</th><th>Status</th></tr></thead>
       <tbody>${filtered.map(n=>`<tr>
+        <td>${thumbCell(n)}</td>
         <td class="mono"><span class="badge ${typeBadge(n.type)}">${esc(n.id)}</span></td>
         <td>${esc(n.country||'—')}</td><td>${esc(n.region||'—')}</td>
         <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(n.issuer||'—')}</td>
@@ -2396,10 +3230,92 @@ async function refreshAllReports() {
 // ════════════════════════════════════════════════════════
 //  PRINT
 // ════════════════════════════════════════════════════════
+// Print a full HTML document WITHOUT a pop-up window: render it into a hidden
+// iframe and print that. Browsers do not block this, so "allow pop-ups" is no
+// longer required. Falls back to a window only if the iframe path fails.
+function printViaIframe(html) {
+  return new Promise((resolve, reject) => {
+    try {
+      const old = document.getElementById('print-frame'); if (old) old.remove();
+      const iframe = document.createElement('iframe');
+      iframe.id = 'print-frame';
+      iframe.setAttribute('aria-hidden', 'true');
+      Object.assign(iframe.style, { position:'fixed', right:'0', bottom:'0', width:'0', height:'0', border:'0', opacity:'0' });
+      document.body.appendChild(iframe);
+      const win = iframe.contentWindow;
+      const doc = win.document;
+      doc.open(); doc.write(html); doc.close();
+
+      let fired = false;
+      const fire = () => {
+        if (fired) return; fired = true;
+        try { win.focus(); win.print(); } catch (e) {}
+        setTimeout(() => { iframe.remove(); resolve(); }, 1200);
+      };
+      // Wait for any images (data URLs are usually instant) before printing.
+      const start = () => {
+        const imgs = [...doc.images].filter(im => !im.complete);
+        if (!imgs.length) return fire();
+        let left = imgs.length;
+        const tick = () => { if (--left <= 0) fire(); };
+        imgs.forEach(im => { im.addEventListener('load', tick); im.addEventListener('error', tick); });
+        setTimeout(fire, 2500); // safety net
+      };
+      setTimeout(start, 60);
+    } catch (err) { reject(err); }
+  });
+}
+
+async function printHTML(html) {
+  try {
+    await printViaIframe(html);
+  } catch (e) {
+    // Last resort: try a normal window; if blocked, guide the user to settings.
+    const w = window.open('', '_blank');
+    if (!w) { popupHelp(); return; }
+    w.document.write(html); w.document.close(); w.focus(); w.print();
+  }
+}
+
+// Shown only if a print window is ever blocked. Gives browser-specific steps
+// plus a copyable settings address (browsers don't allow JS to open settings).
+function popupHelp() {
+  const ua = navigator.userAgent;
+  let name = 'your browser', url = '', steps = '';
+  if (/Edg\//.test(ua)) {
+    name = 'Microsoft Edge'; url = 'edge://settings/content/popups';
+    steps = 'Settings → Cookies and site permissions → Pop-ups and redirects → Allow';
+  } else if (/Firefox\//.test(ua)) {
+    name = 'Firefox'; url = 'about:preferences#privacy';
+    steps = 'Settings → Privacy & Security → Permissions → uncheck “Block pop-up windows” (or add an exception)';
+  } else if (/Chrome\//.test(ua) && !/Edg\//.test(ua)) {
+    name = 'Google Chrome'; url = 'chrome://settings/content/popups';
+    steps = 'Settings → Privacy and security → Site settings → Pop-ups and redirects → Allowed';
+  } else if (/Safari\//.test(ua)) {
+    name = 'Safari';
+    steps = 'Safari menu → Settings → Websites → Pop-up Windows → set this site to “Allow”. ' +
+            'Or, when you print, tap the address-bar pop-up icon and choose “Allow”.';
+  }
+  const copyBtn = url
+    ? `<button class="btn btn-gold btn-sm" onclick="copyText('${url}')">📋 Copy settings address</button>
+       <p style="font-size:11px;color:var(--muted);margin-top:6px">Paste it into the address bar and press Enter — browsers don’t allow a website to open settings for you.</p>`
+    : '';
+  $('ph-body').innerHTML = `
+    <p style="font-size:12px;color:var(--text2);line-height:1.6">
+      Your browser blocked the print window. Printing should now work without pop-ups, but if you still see this,
+      allow pop-ups for this site in <strong>${name}</strong>:</p>
+    <p style="font-size:12px;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:9px 11px;margin:10px 0">${steps}</p>
+    ${url?`<div class="slabel">Settings address</div><div class="mono" style="font-size:11px;word-break:break-all;margin-bottom:8px">${url}</div>`:''}
+    <div class="btn-row">${copyBtn}<button class="btn btn-out btn-sm" onclick="closeModal('modal-popuphelp')">Close</button></div>`;
+  openModal('modal-popuphelp');
+}
+function copyText(t) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(t).then(() => toast('Copied ✓'), () => toast('Copy failed — select and copy manually'));
+  } else { toast('Copy not supported — select the address manually'); }
+}
+
 async function printReport(type) {
-  const w = window.open('','_blank');
-  if (!w) { alert('Please allow pop-ups for this page to enable printing.'); return; }
-  w.document.write('<html><head><title>Loading…</title></head><body><p style="font-family:Georgia;padding:20px">Preparing report…</p></body></html>');
   const notes = await dbAll('notes');
   const txs = await dbAll('txs');
   const now = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
@@ -2413,6 +3329,8 @@ async function printReport(type) {
     th{background:#f0f0f0;font-weight:700}
     .badge{display:inline-block;border:1px solid #999;padding:0 5px;border-radius:8px;font-size:9px;font-weight:700}
     img{max-height:70px;object-fit:contain}
+    td.thumb{width:84px;text-align:center;padding:2px}
+    td.thumb img{max-height:44px;max-width:80px;border:1px solid #ccc;border-radius:2px}
     .footer{font-size:10px;color:#666;margin-top:14px;border-top:1px solid #ccc;padding-top:6px}
     @page{margin:15mm}
   </style>`;
@@ -2423,8 +3341,9 @@ async function printReport(type) {
     const cost = notes.reduce((a,n)=>a+(parseFloat(n.cost)||0),0);
     content = `<h1>MX Bank Note Registry — Inventory Report</h1>
       <p class="meta">Generated: ${now} &nbsp;|&nbsp; ${notes.length} notes &nbsp;|&nbsp; Total Value: $${total.toLocaleString()}</p>
-      <table><thead><tr><th>Inv #</th><th>Country</th><th>Region</th><th>Issuer</th><th>Denomination</th><th>Date</th><th>Type</th><th>Grade</th><th>Rarity</th><th>Pick #</th><th>Cost</th><th>Value</th><th>Status</th></tr></thead>
+      <table><thead><tr><th>Img</th><th>Inv #</th><th>Country</th><th>Region</th><th>Issuer</th><th>Denomination</th><th>Date</th><th>Type</th><th>Grade</th><th>Rarity</th><th>Pick #</th><th>Cost</th><th>Value</th><th>Status</th></tr></thead>
       <tbody>${notes.map(n=>`<tr>
+        <td class="thumb">${(n.imgObv||n.imgRev||n.imgDet)?`<img src="${n.imgObv||n.imgRev||n.imgDet}">`:''}</td>
         <td><b>${n.id}</b></td><td>${n.country||''}</td><td>${n.region||''}</td>
         <td>${n.issuer||''}</td><td>${n.denomination||''}</td><td>${n.noteDate||''}</td>
         <td>${n.type==='certified'?'Graded':'Raw'}</td>
@@ -2442,8 +3361,8 @@ async function printReport(type) {
     content = `<h1>MX Bank Note Registry — Collection Report</h1><p class="meta">Generated: ${now}</p>` +
       Object.entries(by).sort(([a],[b])=>a.localeCompare(b)).map(([c,ns])=>`
         <h2>${c} — ${ns.length} notes &nbsp;|&nbsp; $${ns.reduce((a,n)=>a+(parseFloat(n.value)||0),0).toFixed(2)}</h2>
-        <table><thead><tr><th>Inv #</th><th>Issuer</th><th>Denom.</th><th>Date</th><th>Type</th><th>Grade</th><th>Rarity</th><th>Cost</th><th>Value</th><th>Status</th></tr></thead>
-        <tbody>${ns.map(n=>`<tr><td><b>${n.id}</b></td><td>${n.issuer||''}</td><td>${n.denomination||''}</td>
+        <table><thead><tr><th>Img</th><th>Inv #</th><th>Issuer</th><th>Denom.</th><th>Date</th><th>Type</th><th>Grade</th><th>Rarity</th><th>Cost</th><th>Value</th><th>Status</th></tr></thead>
+        <tbody>${ns.map(n=>`<tr><td class="thumb">${(n.imgObv||n.imgRev||n.imgDet)?`<img src="${n.imgObv||n.imgRev||n.imgDet}">`:''}</td><td><b>${n.id}</b></td><td>${n.issuer||''}</td><td>${n.denomination||''}</td>
           <td>${n.noteDate||''}</td><td>${n.type==='certified'?'Graded':'Raw'}</td>
           <td>${n.type==='certified'?(n.grade||''):(n.condition||'')}</td>
           <td>${n.rarity||''}</td>
@@ -2473,16 +3392,12 @@ async function printReport(type) {
       <div class="footer">Total purchases: $${total.toFixed(2)} &nbsp;|&nbsp; Total sales (net): $${sold.toFixed(2)} &nbsp;|&nbsp; Total donations (FMV): $${donated.toFixed(2)}</div>`;
   }
 
-  w.document.write(`<!DOCTYPE html><html><head><title>MX Bank Note Registry — ${type}</title>${css}</head><body>${content}</body></html>`);
-  w.document.close(); w.focus(); w.print();
+  await printHTML(`<!DOCTYPE html><html><head><title>MX Bank Note Registry — ${type}</title>${css}</head><body>${content}</body></html>`);
 }
 
 async function printNoteDetail(id) {
-  const w = window.open('','_blank');
-  if (!w) { alert('Please allow pop-ups for this page to enable printing.'); return; }
-  w.document.write('<html><head><title>Loading…</title></head><body><p style="font-family:Georgia;padding:20px">Preparing…</p></body></html>');
   const n = await dbGet('notes', id);
-  if (!n) { w.close(); return; }
+  if (!n) return;
   const css = `<style>body{font-family:Georgia,serif;background:#fff;color:#000;max-width:750px;margin:20px auto}
     h1{font-size:18px;border-bottom:2px solid #000;padding-bottom:5px}h2{font-size:12px;color:#555;margin-top:0}
     table{width:100%;border-collapse:collapse;margin:12px 0}td{border:1px solid #ccc;padding:5px 8px;font-size:11px}
@@ -2503,20 +3418,84 @@ async function printNoteDetail(id) {
     ['Acquisition Cost',n.cost?'$'+parseFloat(n.cost).toFixed(2):''],
     ['Market Value',n.value?'$'+parseFloat(n.value).toFixed(2):''],
     ['Insurance Value',n.insurance?'$'+parseFloat(n.insurance).toFixed(2):''],
-    ['Storage Location',n.location],['Provenance',n.provenance],
+    ['Storage Location',n.location],['Provenance',n.provenance],['Acquisition Date',n.acqDate],
     ['Status',STATUS_LABEL[n.status||'available']],
     ['Added',n.createdAt?new Date(n.createdAt).toLocaleDateString():'']
   ].filter(([,v])=>v);
 
   const imgs = [n.imgObv,n.imgRev,n.imgDet].filter(Boolean);
-  w.document.write(`<!DOCTYPE html><html><head><title>${n.id}</title>${css}</head><body>
+  await printHTML(`<!DOCTYPE html><html><head><title>${n.id}</title>${css}</head><body>
     <h1>${n.country||''} — ${n.denomination||''}</h1>
     <h2>${n.id} &nbsp;|&nbsp; MX Bank Note Registry &nbsp;|&nbsp; Generated: ${new Date().toLocaleDateString()}</h2>
     ${imgs.length?`<div class="imgs">${imgs.map(s=>`<img src="${s}">`).join('')}</div>`:''}
     <table>${fields.map(([l,v])=>`<tr><td class="lbl">${l}</td><td>${v||''}</td></tr>`).join('')}</table>
     ${n.description?`<p><strong>Description:</strong> ${n.description}</p>`:''}
   </body></html>`);
-  w.document.close(); w.focus(); w.print();
+}
+
+// ════════════════════════════════════════════════════════
+//  ALBUM LABELS  (Avery 5160 — 1" × 2-5/8", 30 per sheet)
+// ════════════════════════════════════════════════════════
+function filterByInvReport(notes) {
+  const ft = gv('rptinv-type'), fc = gv('rptinv-country'), fs = gv('rptinv-status');
+  return notes.filter(n => {
+    if (ft && n.type!==ft) return false;
+    if (fc && n.country!==fc) return false;
+    if (fs && (n.status||'available')!==fs) return false;
+    return true;
+  });
+}
+
+function labelCardHTML(n) {
+  const img = n.imgObv || n.imgRev || n.imgDet;
+  const cond = n.type==='certified' ? (n.grade ? ('Grade '+n.grade) : '—') : (n.condition || '—');
+  const cost = n.cost ? '$'+parseFloat(n.cost).toFixed(2) : '—';
+  const denomCur = [n.denomination, n.currency].filter(Boolean).map(esc).join(' · ') || '—';
+  return `<div class="label">
+    ${img ? `<img class="thumb" src="${img}">` : `<div class="ph">no img</div>`}
+    <div class="txt">
+      <div class="cty">${esc(n.country||'—')}<span class="id">${esc(n.id||'')}</span></div>
+      <div class="ln"><span class="k">Bank:</span> ${esc(n.issuer||'—')}</div>
+      <div class="ln">${denomCur}</div>
+      <div class="ln"><span class="k">Date:</span> ${esc(n.noteDate||'—')}</div>
+      <div class="ln"><span class="k">Print:</span> ${esc(n.printer||'—')}</div>
+      <div class="ln"><span class="k">Cond:</span> ${esc(cond)}</div>
+      <div class="ln"><span class="k">Acq:</span> ${esc(n.acqDate||'—')} · ${esc(cost)}</div>
+    </div>
+  </div>`;
+}
+
+function buildLabelsHTML(notes) {
+  const css = `<style>
+    @page{size:letter;margin:0.5in 0.1875in}
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .sheet{display:grid;grid-template-columns:repeat(3,2.625in);column-gap:0.125in;row-gap:0}
+    .label{width:2.625in;height:1in;overflow:hidden;padding:0.05in 0.07in;display:flex;gap:0.06in;
+      break-inside:avoid;page-break-inside:avoid;font-family:Arial,Helvetica,sans-serif;color:#000}
+    .label .thumb{flex:0 0 0.62in;width:0.62in;height:0.9in;border:1px solid #bbb;border-radius:2px;object-fit:cover}
+    .label .ph{flex:0 0 0.62in;width:0.62in;height:0.9in;border:1px dashed #ccc;border-radius:2px;
+      display:flex;align-items:center;justify-content:center;font-size:6px;color:#aaa}
+    .label .txt{flex:1 1 auto;min-width:0;line-height:1.12;overflow:hidden}
+    .label .cty{font-size:7.5px;font-weight:700;margin-bottom:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .label .cty .id{float:right;font-weight:400;font-size:5px;color:#888}
+    .label .ln{font-size:5.6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .label .k{color:#444;font-weight:700}
+  </style>`;
+  const cards = notes.map(labelCardHTML).join('');
+  return `<!DOCTYPE html><html><head><title>Album Labels — Avery 5160</title>${css}</head>
+    <body><div class="sheet">${cards}</div></body></html>`;
+}
+
+// Print album labels. Pass an array of note IDs for specific notes,
+// otherwise prints the current Inventory-report filtered set.
+async function printLabels(ids) {
+  const all = await dbAll('notes');
+  let notes;
+  if (Array.isArray(ids) && ids.length) notes = ids.map(id => all.find(n => n.id===id)).filter(Boolean);
+  else notes = filterByInvReport(all);
+  if (!notes.length) { alert('No notes to print labels for.'); return; }
+  await printHTML(buildLabelsHTML(notes));
 }
 
 // ════════════════════════════════════════════════════════
@@ -2547,7 +3526,7 @@ async function doRestore(e) {
       tx.objectStore('txs').clear();
       (data.txs||[]).forEach(t=>tx.objectStore('txs').put(t));
       tx.oncomplete=res; tx.onerror=rej; });
-    if (data.ref) { ref=data.ref; await saveRef(); }
+    if (data.ref) { ref=data.ref; migrateRef(); await saveRef(); }
     if (data.counters) { counters=data.counters; await saveCounters(); }
     toast('Restore complete ✓');
     renderDashboard();
